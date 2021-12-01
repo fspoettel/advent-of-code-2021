@@ -28,7 +28,7 @@ fn read_input_file(day: u8) -> String {
         .join(format!("day{:02}.txt", day));
 
     let f = fs::read_to_string(filepath);
-    return f.expect("could not open input file");
+    f.expect("could not open input file")
 }
 
 fn print_solution(solution_one: u32, solution_two: u32) {
