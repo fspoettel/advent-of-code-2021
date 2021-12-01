@@ -4,6 +4,17 @@ use std::fs;
 mod solutions;
 use crate::solutions::*;
 
+macro_rules! solve_day {
+    ($day:path, $input:expr) => {{
+        use $day::*;
+        println!(
+            "part 1 = {:?}, part 2 = {:?}",
+            part_one($input),
+            part_two($input)
+        );
+    }};
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -12,9 +23,7 @@ fn main() {
     let input = read_input_file(day);
 
     match day {
-        1 => {
-            print_solution(day01::part_one(&input), day01::part_two(&input));
-        }
+        1 => solve_day!(day01, &input),
         _ => println!("day not solved: {}", day),
     }
 }
@@ -29,8 +38,4 @@ fn read_input_file(day: u8) -> String {
 
     let f = fs::read_to_string(filepath);
     f.expect("could not open input file")
-}
-
-fn print_solution(solution_one: u32, solution_two: u32) {
-    println!("part 1 = {:?}, part 2 = {:?}", solution_one, solution_two)
 }

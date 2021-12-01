@@ -31,10 +31,15 @@ fn example() {
 }
 ```
 
+**Mod:**
+
+```rs
+pub mod day01;
+```
+
 **Main:**
 
 ```rs
-1 => {
-    print_solution(day01::part_one(&input), day01::part_two(&input));
-}
+// add to match
+1 => solve_day!(day01, &input),
 ```
