@@ -1,14 +1,64 @@
-pub fn part_one(input: &str) -> u32 {
-    0
+struct Instruction<'a> {
+    direction: &'a str,
+    value: i32,
 }
 
-pub fn part_two(input: &str) -> u32 {
-    0
+struct Position {
+    x: i32,
+    y: i32,
+    aim: i32,
+}
+
+fn to_instruction(line: &str) -> Instruction {
+    let (direction, _value) = line.split_once(" ").unwrap();
+
+    Instruction {
+        direction,
+        value: _value.parse().unwrap(),
+    }
+}
+
+fn update_position(pos: Position, Instruction { direction, value }: Instruction) -> Position {
+    match direction {
+        "forward" => Position {
+            x: pos.x + value,
+            y: pos.y + pos.aim * value,
+            ..pos
+        },
+        "down" => Position {
+            aim: pos.aim + value,
+            ..pos
+        },
+        "up" => Position {
+            aim: pos.aim - value,
+            ..pos
+        },
+        val => panic!("bad direction input: {}", val),
+    }
+}
+
+pub fn part_one(input: &str) -> i32 {
+    let pos = input
+        .lines()
+        .map(to_instruction)
+        .fold(Position { x: 0, y: 0, aim: 0 }, update_position);
+
+    // optimization: `aim` in part two mirrors `depth` in part one which allows us to reuse the positioning logic.
+    pos.x * pos.aim
+}
+
+pub fn part_two(input: &str) -> i32 {
+    let pos = input
+        .lines()
+        .map(to_instruction)
+        .fold(Position { x: 0, y: 0, aim: 0 }, update_position);
+
+    pos.x * pos.y
 }
 
 #[test]
 fn example() {
-    let input = "".to_string();
-    assert_eq!(part_one(&input), 0);
-    assert_eq!(part_two(&input), 0);
+    let input = "forward 5\ndown 5\nforward 8\nup 3\ndown 8\nforward 2".to_string();
+    assert_eq!(part_one(&input), 150);
+    assert_eq!(part_two(&input), 900);
 }
