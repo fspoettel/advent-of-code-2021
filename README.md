@@ -22,7 +22,7 @@ pub fn part_two(input: &str) -> u32 {
 
 #[test]
 fn example() {
-    let input = "".to_string();
+    let input = "";
     assert_eq!(part_one(&input), 0);
     assert_eq!(part_two(&input), 0);
 }
