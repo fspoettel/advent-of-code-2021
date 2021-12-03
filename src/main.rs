@@ -25,6 +25,7 @@ fn main() {
     match day {
         1 => solve_day!(day01, &input),
         2 => solve_day!(day02, &input),
+        3 => solve_day!(day03, &input),
         _ => println!("day not solved: {}", day),
     }
 }

@@ -1,20 +1,17 @@
-# aoc-2021
+# 🎄 [Advent of Code 2021](https://adventofcode.com/2021/) 🎄
 
 ## Usage
 
-> ⚠️ filenames are padded with a leading `0`.
-
-1. add file `./inputs/day{day}.txt` with your inputs. example: `./inputs/day02.txt`
-2. add file `./solutions/day{day}.rs` with your solutions. example: `./solutions/day02.rs`
+1. add file `./inputs/day{day}.txt` with your inputs. example: `./inputs/day01.txt`
+2. add file `./solutions/day{day}.rs` with your solutions. example: `./solutions/day01.rs`
 3. reference the module in `./solutions/mod.rs`.
 4. add day to `./main.rs`.
-5. execute `cargo run <day>`. example: `cargo run 02`
+5. execute `cargo run <day>`. example: `cargo run 01`
 
 ## Templates
 
-**Day:**
-
 ```rs
+/// <dayXX.rs>
 pub fn part_one(input: &str) -> u32 {
     0
 }
@@ -31,15 +28,12 @@ fn example() {
 }
 ```
 
-**Mod:**
-
 ```rs
+/// solutions/mod.rs
 pub mod day01;
 ```
 
-**Main:**
-
 ```rs
-// add to match
+/// main.rs
 1 => solve_day!(day01, &input),
 ```
