@@ -1,5 +1,4 @@
 use aoc2021::str_to_u32;
-use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 
 static BOARD_SIZE: usize = 5;
@@ -19,8 +18,8 @@ fn to_draw(line: &str) -> Vec<u32> {
     line.split(',').map(str_to_u32).collect()
 }
 
-fn to_board<'a>(lines: impl Iterator<Item = &'a str>) -> Board {
-    lines.enumerate().fold(
+fn to_board(lines: &[&str]) -> Board {
+    lines.iter().enumerate().fold(
         Board {
             nums: HashSet::new(),
             rows: HashMap::new(),
@@ -54,8 +53,8 @@ fn to_boards<'a>(lines: impl Iterator<Item = &'a str>) -> Boards {
 
     lines
         .filter(|l| !l.is_empty())
+        .collect::<Vec<&str>>()
         .chunks(BOARD_SIZE)
-        .into_iter()
         .map(to_board)
         .enumerate()
         .for_each(|(i, b)| {
@@ -81,7 +80,7 @@ fn find_winners(draw: &[u32], boards: &Boards, i: usize) -> Vec<(usize, u32)> {
             let uncrossed_nums: u32 = b.nums.iter().filter(|n| !draws.contains(n)).sum();
             (*key, current_draw * uncrossed_nums)
         })
-        .collect_vec()
+        .collect()
 }
 
 fn find_first_winner(draw: &[u32], boards: &mut Boards, i: usize) -> u32 {

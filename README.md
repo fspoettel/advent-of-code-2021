@@ -38,14 +38,16 @@ cargo run <day>
 #
 # 🎄 Part 1 🎄
 #
-# 0
+# 6 (elapsed: 37.03µs)
 #
 # 🎄 Part 2 🎄
 #
-# 0
+# 9 (elapsed: 33.18µs)
 #
 # ----
 ```
+
+To run an optimized version for benchmarking, append the `--release` flag.
 
 ### Run all solutions against example input
 
