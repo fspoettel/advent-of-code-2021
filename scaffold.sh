@@ -1,0 +1,49 @@
+#!/bin/bash
+day=$(echo $1 | sed 's/^0*//');
+day_padded=`printf %02d $day`;
+
+filename="day$day_padded";
+
+example_path="src/examples/$filename.txt";
+input_path="src/inputs/$filename.txt";
+module_path="src/solutions/$filename.rs";
+
+touch $module_path;
+echo "Created module \`$module_path\`";
+
+cat > "src/solutions/$filename.rs" <<EOF
+use aoc2021::read_file;
+
+pub fn part_one(input: &str) -> u32 {
+    0
+}
+
+pub fn part_two(input: &str) -> u32 {
+    0
+}
+
+#[test]
+fn example() {
+    let input = read_file("examples", day);
+    assert_eq!(part_one(&input), 0);
+    assert_eq!(part_two(&input), 0);
+}
+EOF
+
+sed -i "s/day/$day/g" "src/solutions/$filename.rs";
+
+touch $input_path;
+echo "Created input file \`$input_path\`";
+
+touch $example_path;
+echo "Created example file \`$example_path\`";
+
+sed -i "/^.*_ => println!(\"day not solved: {}\", day),/i \ \ \ \ \ \ \ \ $day => solve_day!($filename, &input)," "src/main.rs";
+echo "Linked new module in \`src/main.rs\`";
+
+LINE="pub mod $filename;";
+FILE="src/solutions/mod.rs";
+grep -qF -- "$LINE" "$FILE" || echo "$LINE" >> "$FILE";
+echo "Linked new module in \`$FILE\`";
+
+echo "Have fun! 🎄";

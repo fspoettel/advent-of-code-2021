@@ -1,17 +1,26 @@
-use std::env;
 use aoc2021::read_file;
+use std::env;
 
 mod solutions;
 use crate::solutions::*;
 
+static ANSI_BOLD: &str = "\x1b[1m";
+static ANSI_RESET: &str = "\x1b[0m";
+
 macro_rules! solve_day {
     ($day:path, $input:expr) => {{
         use $day::*;
-        println!(
-            "part 1 = {:?}, part 2 = {:?}",
-            part_one($input),
-            part_two($input)
-        );
+        println!("----");
+        println!("");
+        println!("🎄 {}Part 1{} 🎄", ANSI_BOLD, ANSI_RESET);
+        println!("");
+        println!("{}", part_one($input));
+        println!("");
+        println!("🎄 {}Part 2{} 🎄", ANSI_BOLD, ANSI_RESET);
+        println!("");
+        println!("{}", part_two($input));
+        println!("");
+        println!("----");
     }};
 }
 
@@ -31,4 +40,3 @@ fn main() {
         _ => println!("day not solved: {}", day),
     }
 }
-

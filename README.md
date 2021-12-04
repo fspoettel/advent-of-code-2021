@@ -1,39 +1,66 @@
-# 🎄 [Advent of Code 2021](https://adventofcode.com/2021/) 🎄
+# [Advent of Code](https://adventofcode.com/2021/) 🎄
 
-## Usage
+![Language](https://badgen.net/badge/Language/Rust)
 
-1. add file `./inputs/day{day}.txt` with your inputs. example: `./inputs/day01.txt`
-2. add file `./solutions/day{day}.rs` with your solutions. example: `./solutions/day01.rs`
-3. reference the module in `./solutions/mod.rs`.
-4. add day to `./main.rs`.
-5. execute `cargo run <day>`. example: `cargo run 01`
+## Setup
 
-## Templates
+* Install the [Rust toolchain](https://www.rust-lang.org/tools/install).
+* (recommended) Install [rust-analyzer](https://rust-analyzer.github.io/manual.html) for your editor.
 
-```rs
-/// <dayXX.rs>
-pub fn part_one(input: &str) -> u32 {
-    0
-}
+## Commands
 
-pub fn part_two(input: &str) -> u32 {
-    0
-}
+### Setup new day
 
-#[test]
-fn example() {
-    let input = "";
-    assert_eq!(part_one(&input), 0);
-    assert_eq!(part_two(&input), 0);
-}
+```sh
+# example: `./scaffold 1`
+./scaffold <day>
+
+# output:
+# Created module `src/solutions/day01.rs`
+# Created input file `src/inputs/day01.txt`
+# Created example file `src/examples/day01.txt`
+# Linked new module in `src/main.rs`
+# Linked new module in `src/solutions/mod.rs`
+# Have fun! 🎄
 ```
 
-```rs
-/// solutions/mod.rs
-pub mod day01;
+Every solution file has a _unit test_ referencing the example input file. You can use this test to develop and debug your solution. When editing a solution file, `rust-analyzer`  will display buttons for these actions above the unit test.
+
+### Run solutions for a day
+
+```sh
+# example: `cargo run 1`
+cargo run <day>
+
+# output:
+#     Running `target/debug/aoc2021 1`
+# ----
+#
+# 🎄 Part 1 🎄
+#
+# 0
+#
+# 🎄 Part 2 🎄
+#
+# 0
+#
+# ----
 ```
 
-```rs
-/// main.rs
-1 => solve_day!(day01, &input),
+### Run all solutions against example input
+
+```sh
+cargo test
+```
+
+### Format code
+
+```sh
+cargo fmt
+```
+
+### Lint code
+
+```sh
+cargo clippy
 ```
