@@ -58,7 +58,8 @@ pub fn part_two(input: &str) -> i32 {
 
 #[test]
 fn example() {
-    let input = "forward 5\ndown 5\nforward 8\nup 3\ndown 8\nforward 2";
+    use aoc2021::read_file;
+    let input = read_file("examples", 2);
     assert_eq!(part_one(&input), 150);
     assert_eq!(part_two(&input), 900);
 }

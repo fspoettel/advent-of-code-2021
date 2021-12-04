@@ -1,5 +1,5 @@
 use std::env;
-use std::fs;
+use aoc2021::read_file;
 
 mod solutions;
 use crate::solutions::*;
@@ -20,7 +20,7 @@ fn main() {
 
     let day: u8 = args[1].clone().parse().unwrap();
 
-    let input = read_input_file(day);
+    let input = read_file("inputs", day);
 
     match day {
         1 => solve_day!(day01, &input),
@@ -32,14 +32,3 @@ fn main() {
     }
 }
 
-fn read_input_file(day: u8) -> String {
-    let cwd = env::current_dir().unwrap();
-
-    let filepath = cwd
-        .join("src")
-        .join("inputs")
-        .join(format!("day{:02}.txt", day));
-
-    let f = fs::read_to_string(filepath);
-    f.expect("could not open input file")
-}

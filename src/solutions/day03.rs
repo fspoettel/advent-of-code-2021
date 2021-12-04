@@ -64,8 +64,8 @@ fn find_line_by_bit_criteria<'a>(
 
 #[test]
 fn example() {
-    let input =
-        "00100\n11110\n10110\n10111\n10101\n01111\n00111\n11100\n10000\n11001\n00010\n01010";
+    use aoc2021::read_file;
+    let input = read_file("examples", 3);
     assert_eq!(part_one(&input), 198);
     assert_eq!(part_two(&input), 230);
 }
