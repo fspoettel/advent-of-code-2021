@@ -1,4 +1,4 @@
-use aoc2021::{bits_to_u32, str_to_u32};
+use aoc2021::{bits_to_u32, byte_str_to_u32};
 use itertools::Itertools;
 use std::collections::HashMap;
 
@@ -38,7 +38,7 @@ pub fn part_two(input: &str) -> u32 {
     let co2_rating =
         find_line_by_bit_criteria(|a, b| if a.len() >= b.len() { b } else { a }, &lines);
 
-    str_to_u32(oxy_rating) * str_to_u32(co2_rating)
+    byte_str_to_u32(oxy_rating) * byte_str_to_u32(co2_rating)
 }
 
 fn find_line_by_bit_criteria<'a>(
