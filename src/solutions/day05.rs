@@ -23,8 +23,8 @@ impl PointGrid for Grid {
         *self.entry(key).or_default() += 1;
     }
 
-    fn add_points(&mut self, l: &str, include_diagonals: bool) {
-        let (p1, p2) = parse_line(l);
+    fn add_points(&mut self, line: &str, include_diagonals: bool) {
+        let (p1, p2) = parse_line(line);
         // horizontals
         if p1.y == p2.y {
             for i in min_to_max(p1.x, p2.x) {
@@ -47,8 +47,7 @@ impl PointGrid for Grid {
     }
 
     fn overlaps(&self) -> u32 {
-        self
-            .values()
+        self.values()
             .filter(|v| **v > 1)
             .count()
             .try_into()
@@ -85,9 +84,15 @@ pub fn part_two(input: &str) -> u32 {
 }
 
 #[test]
-fn example() {
+fn test_part_one() {
     use aoc2021::read_file;
     let input = read_file("examples", 5);
     assert_eq!(part_one(&input), 5);
+}
+
+#[test]
+fn test_part_two() {
+    use aoc2021::read_file;
+    let input = read_file("examples", 5);
     assert_eq!(part_two(&input), 12);
 }

@@ -63,9 +63,15 @@ fn find_line_by_bit_criteria<'a>(
 }
 
 #[test]
-fn example() {
+fn test_part_one() {
     use aoc2021::read_file;
     let input = read_file("examples", 3);
     assert_eq!(part_one(&input), 198);
+}
+
+#[test]
+fn test_part_two() {
+    use aoc2021::read_file;
+    let input = read_file("examples", 3);
     assert_eq!(part_two(&input), 230);
 }

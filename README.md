@@ -24,7 +24,7 @@
 # Have fun! 🎄
 ```
 
-Every solution file has a _unit test_ referencing the example input file. You can use this test to develop and debug your solution. When editing a solution file, `rust-analyzer`  will display buttons for these actions above the unit test.
+Every solution file has _unit tests_ referencing the example input file. You can use these tests to develop and debug your solution. When editing a solution file, `rust-analyzer` will display buttons for these actions above the unit tests.
 
 ### Run solutions for a day
 

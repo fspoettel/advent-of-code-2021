@@ -23,9 +23,14 @@ pub fn part_two(input: &str) -> u32 {
 }
 
 #[test]
-fn example() {
+fn test_part_one() {
     let input = read_file("examples", day);
     assert_eq!(part_one(&input), 0);
+}
+
+#[test]
+fn test_part_two() {
+    let input = read_file("examples", day);
     assert_eq!(part_two(&input), 0);
 }
 EOF

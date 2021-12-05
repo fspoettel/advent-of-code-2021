@@ -57,9 +57,15 @@ pub fn part_two(input: &str) -> i32 {
 }
 
 #[test]
-fn example() {
+fn test_part_one() {
     use aoc2021::read_file;
     let input = read_file("examples", 2);
     assert_eq!(part_one(&input), 150);
+}
+
+#[test]
+fn test_part_two() {
+    use aoc2021::read_file;
+    let input = read_file("examples", 2);
     assert_eq!(part_two(&input), 900);
 }
