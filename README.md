@@ -66,3 +66,7 @@ cargo fmt
 ```sh
 cargo clippy
 ```
+
+---
+
+Puzzle inputs are not checked into git. For the why, [see here](https://old.reddit.com/r/adventofcode/comments/k99rod/sharing_input_data_were_we_requested_not_to/gf2ukkf/?context=3).
