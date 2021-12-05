@@ -1,6 +1,8 @@
-# [Advent of Code](https://adventofcode.com/2021/) 🎄
+<img src="https://user-images.githubusercontent.com/1682504/144760188-7962b414-9af0-4fdd-a278-67db23fa1181.png" width="164" align="center">
 
-![Language](https://badgen.net/badge/Language/Rust)
+# 🎄 [Advent of Code](https://adventofcode.com/2021/)
+
+![Language](https://badgen.net/badge/Language/Rust/orange)
 
 ## Setup
 
