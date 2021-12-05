@@ -1,5 +1,8 @@
 use aoc2021::str_to_u32;
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    convert::TryInto,
+};
 
 static BOARD_SIZE: usize = 5;
 
@@ -8,8 +11,9 @@ struct Board {
     // holds unique numbers on this board in a set. this makes summing uncrossed numbers easy and efficient.
     nums: HashSet<u32>,
     // holds both `horizontal` and `vertical` rows of ths board.
-    // optimization: we pre-calculate a 'transposed' set of rows & columns once in the beginning.
-    rows: HashMap<String, Vec<u32>>,
+    // optimization: pre-calculate a 'transposed' set of rows & columns once in the beginning.
+    // optimization: use signed integers for keys (- for column ids) to avoid expensive string operations.
+    rows: HashMap<i32, Vec<u32>>,
 }
 
 type Boards = HashMap<usize, Board>;
@@ -24,23 +28,17 @@ fn to_board(lines: &[&str]) -> Board {
             nums: HashSet::new(),
             rows: HashMap::new(),
         },
-        |mut board, (row, l)| {
+        |mut board, (_row, l)| {
             l.trim()
                 .split_whitespace()
                 .enumerate()
-                .for_each(|(col, s)| {
+                .for_each(|(_col, s)| {
                     let parsed: u32 = str_to_u32(s);
+                    let col: i32 = _col.try_into().unwrap();
+                    let row: i32 = _row.try_into().unwrap();
                     board.nums.insert(parsed);
-                    board
-                        .rows
-                        .entry(format!("c.{}", col))
-                        .or_default()
-                        .push(parsed);
-                    board
-                        .rows
-                        .entry(format!("r.{}", row))
-                        .or_default()
-                        .push(parsed);
+                    board.rows.entry(-(col + 1)).or_default().push(parsed);
+                    board.rows.entry(row + 1).or_default().push(parsed);
                 });
 
             board
