@@ -1,48 +1,41 @@
-use std::cmp::{max, min};
-use std::ops::Range;
 use std::{collections::HashMap, convert::TryInto};
 
-#[derive(Debug)]
 struct Point {
-    x: usize,
-    y: usize,
+    x: i32,
+    y: i32,
 }
 
 type Line = (Point, Point);
-type Grid = HashMap<String, u32>;
+type Grid = HashMap<(i32, i32), u32>;
 
 trait PointGrid {
-    fn add_point(&mut self, x: usize, y: usize);
-    fn add_points(&mut self, l: &str, include_diagonals: bool);
+    fn add_point(&mut self, x: i32, y: i32);
+    fn add_points(&mut self, line: &str, skip_diagonals: bool);
     fn overlaps(&self) -> u32;
 }
 
 impl PointGrid for Grid {
-    fn add_point(&mut self, x: usize, y: usize) {
-        let key = format!("{}.{}", x, y);
-        *self.entry(key).or_default() += 1;
+    fn add_point(&mut self, x: i32, y: i32) {
+        *self.entry((x, y)).or_default() += 1;
     }
 
-    fn add_points(&mut self, line: &str, include_diagonals: bool) {
+    fn add_points(&mut self, line: &str, skip_diagonals: bool) {
         let (p1, p2) = parse_line(line);
-        // horizontals
-        if p1.y == p2.y {
-            for i in min_to_max(p1.x, p2.x) {
-                let _ = &self.add_point(i, p1.y);
-            }
-        // verticals
-        } else if p1.x == p2.x {
-            for i in min_to_max(p1.y, p2.y) {
-                let _ = &self.add_point(p1.x, i);
-            }
-        // diagonals
-        } else if include_diagonals {
-            let left = if p1.x < p2.x { &p1 } else { &p2 };
-            let right = if p1.x < p2.x { &p2 } else { &p1 };
-            let ttb = left.y < right.y;
-            for (i, x) in (left.x..right.x + 1).enumerate() {
-                let _ = &self.add_point(x, if ttb { left.y + i } else { left.y - i });
-            }
+
+        if skip_diagonals && (p1.x != p2.x && p1.y != p2.y) {
+            return;
+        }
+
+        let mut x = p1.x;
+        let mut y = p1.y;
+
+        let dx = (p2.x - p1.x).signum();
+        let dy = (p2.y - p1.y).signum();
+
+        while (x, y) != (p2.x + dx, p2.y + dy) {
+            *self.entry((x, y)).or_default() += 1;
+            x += dx;
+            y += dy;
         }
     }
 
@@ -55,13 +48,9 @@ impl PointGrid for Grid {
     }
 }
 
-fn min_to_max(a: usize, b: usize) -> Range<usize> {
-    min(a, b)..max(a, b) + 1
-}
-
 fn parse_line(l: &str) -> Line {
-    let mut parts = l.split("->").map(|p| {
-        let mut nums = p.split(',').map(|x| x.trim().parse().unwrap());
+    let mut parts = l.split(" -> ").map(|p| {
+        let mut nums = p.split(',').map(|x| x.parse().unwrap());
         Point {
             x: nums.next().unwrap(),
             y: nums.next().unwrap(),
@@ -73,13 +62,13 @@ fn parse_line(l: &str) -> Line {
 
 pub fn part_one(input: &str) -> u32 {
     let mut grid: Grid = HashMap::new();
-    input.lines().for_each(|l| grid.add_points(l, false));
+    input.lines().for_each(|l| grid.add_points(l, true));
     grid.overlaps()
 }
 
 pub fn part_two(input: &str) -> u32 {
     let mut grid: Grid = HashMap::new();
-    input.lines().for_each(|l| grid.add_points(l, true));
+    input.lines().for_each(|l| grid.add_points(l, false));
     grid.overlaps()
 }
 
