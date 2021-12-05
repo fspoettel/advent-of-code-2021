@@ -10,7 +10,7 @@ pub fn byte_str_to_u32(str: &str) -> u32 {
 }
 
 pub fn str_to_u32(s: &str) -> u32 {
-    s.parse().unwrap()
+    s.trim().parse().unwrap()
 }
 
 pub fn read_file(folder: &str, day: u8) -> String {
