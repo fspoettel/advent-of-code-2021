@@ -7,7 +7,8 @@
 ## Setup
 
 * Install the [Rust toolchain](https://www.rust-lang.org/tools/install).
-* (recommended) Install [rust-analyzer](https://rust-analyzer.github.io/manual.html) for your editor.
+* (optional) Install [rust-analyzer](https://rust-analyzer.github.io/manual.html) for your editor.
+* (optional) Install a native debugger, e.g. [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb) for VS Code.
 
 ## Commands
 
