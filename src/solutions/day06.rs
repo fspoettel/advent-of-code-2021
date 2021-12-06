@@ -55,7 +55,7 @@ pub fn part_one(input: &str) -> usize {
 }
 
 pub fn part_two(input: &str) -> usize {
-    project_population(get_og_fishes(input), &mut  [0; 256])
+    project_population(get_og_fishes(input), &mut [0; 256])
 }
 
 #[test]
