@@ -1,8 +1,5 @@
 use aoc2021::str_to_u32;
-use std::{
-    collections::{HashMap, HashSet},
-    convert::TryInto,
-};
+use std::collections::{HashMap, HashSet};
 
 static BOARD_SIZE: usize = 5;
 
@@ -34,8 +31,8 @@ fn to_board(lines: &[&str]) -> Board {
                 .enumerate()
                 .for_each(|(_col, s)| {
                     let parsed: u32 = str_to_u32(s);
-                    let col: i32 = _col.try_into().unwrap();
-                    let row: i32 = _row.try_into().unwrap();
+                    let col: i32 = _col as i32;
+                    let row: i32 = _row as i32;
                     board.nums.insert(parsed);
                     board.rows.entry(-(col + 1)).or_default().push(parsed);
                     board.rows.entry(row + 1).or_default().push(parsed);
