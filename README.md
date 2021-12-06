@@ -49,7 +49,7 @@ cargo run <day>
 # ----
 ```
 
-To run an optimized version for benchmarking, append the `--release` flag.
+To run an optimized version for benchmarking, use the `--release` flag or type `cargo rr <day>`.
 
 ### Run all solutions against example input
 
