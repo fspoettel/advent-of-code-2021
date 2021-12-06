@@ -35,7 +35,7 @@ Every solution file has _unit tests_ referencing the example input file. You can
 cargo run <day>
 
 # output:
-#     Running `target/debug/aoc2021 1`
+#     Running `target/debug/aoc 1`
 # ----
 #
 # 🎄 Part 1 🎄

@@ -1,4 +1,4 @@
-use aoc2021::read_file;
+use aoc::read_file;
 use std::env;
 use std::fmt::Display;
 use std::time::Instant;

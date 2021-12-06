@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "aoc2021"
+name = "aoc"
 version = "0.1.0"
 dependencies = [
  "itertools",

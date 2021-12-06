@@ -22,14 +22,14 @@ pub fn part_two(input: &str) -> u32 {
 
 #[test]
 fn test_part_one() {
-    use aoc2021::read_file;
+    use aoc::read_file;
     let input = read_file("examples", day);
     assert_eq!(part_one(&input), 0);
 }
 
 #[test]
 fn test_part_two() {
-    use aoc2021::read_file;
+    use aoc::read_file;
     let input = read_file("examples", day);
     assert_eq!(part_two(&input), 0);
 }

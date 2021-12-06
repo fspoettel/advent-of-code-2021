@@ -1,6 +1,13 @@
-use aoc2021::{bits_to_u32, byte_str_to_u32};
 use itertools::Itertools;
 use std::collections::HashMap;
+
+pub fn bits_to_u32(bits: &[bool]) -> u32 {
+    bits.iter().fold(0, |acc, &b| acc * 2 + (b as u32))
+}
+
+pub fn byte_str_to_u32(str: &str) -> u32 {
+    u32::from_str_radix(str, 2).unwrap()
+}
 
 pub fn part_one(input: &str) -> u32 {
     // counter that maps character indices to signed integers.
@@ -64,14 +71,14 @@ fn find_line_by_bit_criteria<'a>(
 
 #[test]
 fn test_part_one() {
-    use aoc2021::read_file;
+    use aoc::read_file;
     let input = read_file("examples", 3);
     assert_eq!(part_one(&input), 198);
 }
 
 #[test]
 fn test_part_two() {
-    use aoc2021::read_file;
+    use aoc::read_file;
     let input = read_file("examples", 3);
     assert_eq!(part_two(&input), 230);
 }

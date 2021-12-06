@@ -1,4 +1,3 @@
-use aoc2021::str_to_u32;
 use std::collections::{HashMap, HashSet};
 
 static BOARD_SIZE: usize = 5;
@@ -14,6 +13,10 @@ struct Board {
 }
 
 type Boards = HashMap<usize, Board>;
+
+pub fn str_to_u32(s: &str) -> u32 {
+    s.trim().parse().unwrap()
+}
 
 fn to_draw(line: &str) -> Vec<u32> {
     line.split(',').map(str_to_u32).collect()
@@ -122,14 +125,14 @@ pub fn part_two(input: &str) -> u32 {
 
 #[test]
 fn test_part_one() {
-    use aoc2021::read_file;
+    use aoc::read_file;
     let input = read_file("examples", 4);
     assert_eq!(part_one(&input), 4512);
 }
 
 #[test]
 fn test_part_two() {
-    use aoc2021::read_file;
+    use aoc::read_file;
     let input = read_file("examples", 4);
     assert_eq!(part_two(&input), 1924);
 }
