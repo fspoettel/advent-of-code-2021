@@ -15,21 +15,16 @@ pub fn part_one(input: &str) -> i32 {
 }
 
 pub fn part_two(input: &str) -> i32 {
-    let positions = parse_input(input);
+    let mut positions = parse_input(input);
+    positions.sort_unstable();
 
-    let mean = positions.iter().sum::<i32>() / positions.len() as i32;
-
-    // the mean does not always return an int, there is some variance to the result.
-    // the right answer is within the surrounding candidates of the mean though.
-    let candidates = mean - 2..mean + 2;
-
-    // @see https://en.wikipedia.org/wiki/Triangular_number
-    fn triangular(a: i32) -> i32 {
-        a * (a + 1) / 2
-    }
-
-    candidates
-        .map(|i| positions.iter().map(|p| triangular((p - i).abs())).sum())
+    (0..*positions.last().unwrap())
+        .map(|i| {
+            positions
+                .iter()
+                .map(|p| aoc::nth_triangular((p - i).abs()))
+                .sum()
+        })
         .min()
         .unwrap()
 }
