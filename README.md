@@ -1,22 +1,23 @@
 <img src="https://user-images.githubusercontent.com/1682504/144760188-7962b414-9af0-4fdd-a278-67db23fa1181.png" width="164" align="center">
 
-# 🎄 [Advent of Code](https://adventofcode.com/2021/)
+# 🎄 [Advent of Code](https://adventofcode.com/)
 
 ![Language](https://badgen.net/badge/Language/Rust/orange)
 
-## Setup
+## Install
 
 * Install the [Rust toolchain](https://www.rust-lang.org/tools/install).
 * (optional) Install [rust-analyzer](https://rust-analyzer.github.io/manual.html) for your editor.
 * (optional) Install a native debugger, e.g. [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb) for VS Code.
+* (optional) Install [`aoc-cli`](https://github.com/scarvalhojr/aoc-cli/) and follow their setup guide to use the `download` script for puzzle inputs (see below).
 
 ## Commands
 
 ### Setup new day
 
 ```sh
-# example: `./scaffold 1`
-./scaffold <day>
+# example: `./scaffold.sh 1`
+./scaffold.sh <day>
 
 # output:
 # Created module `src/solutions/day01.rs`
@@ -28,6 +29,24 @@
 ```
 
 Every solution file has _unit tests_ referencing the example input file. You can use these tests to develop and debug your solution. When editing a solution file, `rust-analyzer` will display buttons for these actions above the unit tests.
+
+### Download inputs for a day
+
+```sh
+# example: `./download.sh 1`
+./download.sh <day>
+
+# output:
+# Invoking `aoc` cli...
+# Loaded session cookie from "/home/foo/.adventofcode.session".
+# Downloading input for day 1, 2021...
+# Saving puzzle input to "/tmp/..."...
+# Done!
+# Wrote input to `src/inputs/day01.txt`...
+# Have fun! 🎄
+```
+
+Puzzle inputs are not checked into git. [See here](https://old.reddit.com/r/adventofcode/comments/k99rod/sharing_input_data_were_we_requested_not_to/gf2ukkf/?context=3) why.
 
 ### Run solutions for a day
 
@@ -50,7 +69,7 @@ cargo run <day>
 # ----
 ```
 
-To run an optimized version for benchmarking, use the `--release` flag or type `cargo rr <day>`.
+To run an optimized version for benchmarking, use the `--release` flag or the alias `cargo rr <day>`.
 
 ### Run all solutions against example input
 
@@ -69,7 +88,3 @@ cargo fmt
 ```sh
 cargo clippy
 ```
-
----
-
-Puzzle inputs are not checked into git. For the why, [see here](https://old.reddit.com/r/adventofcode/comments/k99rod/sharing_input_data_were_we_requested_not_to/gf2ukkf/?context=3).

@@ -1,11 +1,19 @@
 #!/bin/bash
+
+set -e;
+
+if [ ! -n "$1" ]; then
+    >&2 echo "Argument is required for day."
+    exit 1
+fi
+
 day=$(echo $1 | sed 's/^0*//');
 day_padded=`printf %02d $day`;
 
 filename="day$day_padded";
 
-example_path="src/examples/$filename.txt";
 input_path="src/inputs/$filename.txt";
+example_path="src/examples/$filename.txt";
 module_path="src/solutions/$filename.rs";
 
 touch $module_path;
