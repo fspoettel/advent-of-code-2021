@@ -11,3 +11,4 @@ lto = "thin"
 
 [dependencies]
 itertools = "0.10.1"
+num-traits = "0.2"
