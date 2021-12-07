@@ -4,6 +4,10 @@
 
 ![Language](https://badgen.net/badge/Language/Rust/orange)
 
+<!--- advent_readme_stars table --->
+
+---
+
 ## Install
 
 * Install the [Rust toolchain](https://www.rust-lang.org/tools/install).
