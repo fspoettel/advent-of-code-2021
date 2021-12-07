@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/1682504/144760188-7962b414-9af0-4fdd-a278-67db23fa1181.png" width="164" align="center">
+<img src="./assets/christmas_ferris.png" width="164" align="center">
 
 # 🎄 [Advent of Code](https://adventofcode.com/)
 
