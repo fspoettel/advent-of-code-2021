@@ -43,7 +43,7 @@ fn test_part_two() {
 }
 EOF
 
-sed -i "s/day/$day/g" "src/solutions/$filename.rs";
+perl -pi -e "s,day,$day,g" "src/solutions/$filename.rs";
 
 touch $input_path;
 echo "Created input file \`$input_path\`";
@@ -51,7 +51,9 @@ echo "Created input file \`$input_path\`";
 touch $example_path;
 echo "Created example file \`$example_path\`";
 
-sed -i "/^.*_ => println!(\"day not solved: {}\", day),/i \ \ \ \ \ \ \ \ $day => solve_day!($filename, &input)," "src/main.rs";
+line="        $day => solve_day!($filename, &input),"
+perl -pi -le "print '$line' if(/^*.day not solved/);" "src/main.rs";
+
 echo "Linked new module in \`src/main.rs\`";
 
 LINE="pub mod $filename;";
