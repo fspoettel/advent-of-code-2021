@@ -2,51 +2,20 @@ use std::collections::HashMap;
 
 use itertools::Itertools;
 
-type Pattern = Vec<char>;
-type Signal = Vec<Pattern>;
-type Output = Vec<Pattern>;
-
-fn parse_input(input: &str) -> Vec<(Signal, Output)> {
+pub fn part_one(input: &str) -> usize {
     input
         .lines()
         .map(|l| {
-            let patterns: Vec<Pattern> = l
-                .replace(" |", "")
-                .split(' ')
-                .map(|s| s.chars().collect())
-                .collect();
-            (patterns[0..10].to_vec(), patterns[10..14].to_vec())
+            l.split(" | ").last().unwrap().split(' ').filter(|s| {
+                let len = s.len();
+                (2..=4).contains(&len) || len == 7
+            })
         })
-        .collect()
-}
-
-// c,f
-fn is_one(pattern: &[char]) -> bool {
-    pattern.len() == 2
-}
-
-// b,c,d,f
-fn is_four(pattern: &[char]) -> bool {
-    pattern.len() == 4
-}
-
-// a,c,f
-fn is_seven(pattern: &[char]) -> bool {
-    pattern.len() == 3
-}
-
-// a,b,c,d,e,f,g
-fn is_eight(pattern: &[char]) -> bool {
-    pattern.len() == 7
-}
-
-pub fn part_one(input: &str) -> usize {
-    parse_input(input)
-        .iter()
-        .flat_map(|(_, output)| output)
-        .filter(|p| is_one(p) || is_four(p) || is_seven(p) || is_eight(p))
+        .flatten()
         .count()
 }
+
+type Pattern = Vec<char>;
 
 /// The display is made up of segments `a-g` mapped as follows:
 ///  aaaa
@@ -77,10 +46,7 @@ impl DisplayMethods for Display {
         } else {
             let displayed: String = pattern
                 .iter()
-                .map(|c| {
-                    let val = *self.get(c).unwrap();
-                    val
-                })
+                .map(|c| self.get(c).unwrap())
                 .sorted_unstable()
                 .collect();
 
@@ -97,9 +63,24 @@ impl DisplayMethods for Display {
     }
 }
 
-/// Helper trait to make `.find()`ing the first digits less verbose.
-fn find_by(signal: &[Vec<char>], find_fn: impl Fn(&[char]) -> bool) -> Pattern {
-    signal.iter().find(|x| find_fn(x)).unwrap().to_owned()
+// c,f
+fn is_one(pattern: &[char]) -> bool {
+    pattern.len() == 2
+}
+
+// b,c,d,f
+fn is_four(pattern: &[char]) -> bool {
+    pattern.len() == 4
+}
+
+// a,c,f
+fn is_seven(pattern: &[char]) -> bool {
+    pattern.len() == 3
+}
+
+// a,b,c,d,e,f,g
+fn is_eight(pattern: &[char]) -> bool {
+    pattern.len() == 7
 }
 
 fn is_six(p: &[char], one: &[char]) -> bool {
@@ -110,16 +91,30 @@ fn is_zero(p: &[char], four: &[char]) -> bool {
     four.iter().any(|c| !p.contains(c))
 }
 
+/// Helper trait to make `.find()`ing the first digits less verbose.
+fn find_by(signal: &[Vec<char>], find_fn: impl Fn(&[char]) -> bool) -> Pattern {
+    signal.iter().find(|x| find_fn(x)).unwrap().to_owned()
+}
+
 pub fn part_two(input: &str) -> u32 {
-    parse_input(input)
-        .iter()
-        .map(|(signal, outputs)| {
+    input
+        .lines()
+        .map(|l| {
+            let patterns: Vec<Pattern> = l
+                .replace(" |", "")
+                .split(' ')
+                .map(|s| s.chars().collect())
+                .collect();
+
+            let signal = patterns[0..10].to_vec();
+            let outputs = patterns[10..14].to_vec();
+
             let mut display = Display::new();
 
-            let one = find_by(signal, is_one);
-            let seven = find_by(signal, is_seven);
-            let four = find_by(signal, is_four);
-            let eight = find_by(signal, is_eight);
+            let one = find_by(&signal, is_one);
+            let seven = find_by(&signal, is_seven);
+            let four = find_by(&signal, is_four);
+            let eight = find_by(&signal, is_eight);
 
             // once we know `c` and `f`, we can isolate `a` by looking at `7`
             display.insert(*seven.iter().find(|c| !&one.contains(c)).unwrap(), 'a');
