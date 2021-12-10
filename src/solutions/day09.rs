@@ -56,7 +56,7 @@ fn surounding_points(matrix: &[Vec<u32>], p: &Point) -> [Point; 4] {
 }
 
 fn is_minimum(matrix: &[Vec<u32>], p: &Point) -> bool {
-    surounding_points(matrix, &p).iter().all(|x| x.val > p.val)
+    surounding_points(matrix, p).iter().all(|x| x.val > p.val)
 }
 
 fn get_minimums(matrix: &[Vec<u32>]) -> Vec<Point> {
@@ -88,7 +88,7 @@ fn traverse<'a>(matrix: &'a [Vec<u32>], p: &'a Point, basin: &'a mut Vec<Point>)
             traverse(matrix, x, basin);
         });
 
-    if !basin.contains(&p) {
+    if !basin.contains(p) {
         basin.push(*p);
     }
 }
