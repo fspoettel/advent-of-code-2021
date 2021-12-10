@@ -80,12 +80,12 @@ pub fn part_one(input: &str) -> u32 {
     get_minimums(&matrix).iter().map(|p| p.val + 1).sum()
 }
 
-fn traverse<'a>(matrix: &'a [Vec<u32>], p: &'a Point, basin: &'a mut Vec<Point>) {
+fn flood_fill<'a>(matrix: &'a [Vec<u32>], p: &'a Point, basin: &'a mut Vec<Point>) {
     surounding_points(matrix, p)
         .iter()
         .filter(|x| x.val != 9 && x.val > p.val)
         .for_each(|x| {
-            traverse(matrix, x, basin);
+            flood_fill(matrix, x, basin);
         });
 
     if !basin.contains(p) {
@@ -100,7 +100,7 @@ pub fn part_two(input: &str) -> usize {
         .iter()
         .map(|p| {
             let mut basin: Vec<Point> = Vec::new();
-            traverse(&matrix, p, &mut basin);
+            flood_fill(&matrix, p, &mut basin);
             basin.len()
         })
         .collect::<Vec<usize>>();

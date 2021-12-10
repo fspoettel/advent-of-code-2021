@@ -1,12 +1,14 @@
-use std::collections::VecDeque;
-
 use aoc::median;
 
-type ParsingResult = Result<CharacterStack, ParsingError>;
-type CharacterStack = VecDeque<char>;
+/// tracks open tokens (e.g. `(`) in sequence of occurence.
+type CharacterStack = Vec<char>;
+
+/// error thrown if parser fails to parse a line.
 struct ParsingError {
     token: char,
 }
+
+type ParsingResult = Result<CharacterStack, ParsingError>;
 
 fn opener(c: char) -> Option<char> {
     match c {
@@ -18,21 +20,21 @@ fn opener(c: char) -> Option<char> {
     }
 }
 
-/// go through the line character-by-character.
-/// opening chars are pushed to the front of the stack.
-/// closing chars are checked against the front of the stack.
-/// if it matches, we continue processing the line.
-/// if it does not match, we throw a ParsingError containing the offending token.
-/// once the line completes parsing without errors, we return the rest of the stack.
+/// go through the line char-by-char.
+/// opening chars are added to a stack.
+/// when closing char is encountered, pop the first item of the stack.
+/// if the closing char can be used to close the pair, continue processing the line.
+/// if it does not match, throw a `ParsingError` referencing the offending token.
+/// once the line completes parsing without errors, return the rest of the stack.
 fn parse(line: &str) -> ParsingResult {
-    let mut stack: CharacterStack = VecDeque::new();
+    let mut stack: CharacterStack = Vec::new();
     let mut offending_token: Option<char> = None;
 
     for c in line.chars() {
         let opener = opener(c);
 
         if let Some(opener) = opener {
-            match stack.pop_front() {
+            match stack.pop() {
                 Some(last_open) => {
                     if opener != last_open {
                         offending_token = Some(c);
@@ -46,7 +48,7 @@ fn parse(line: &str) -> ParsingResult {
                 }
             }
         } else {
-            stack.push_front(c);
+            stack.push(c);
         }
     }
 
@@ -77,7 +79,7 @@ pub fn part_two(input: &str) -> u64 {
         .lines()
         .filter_map(|l| match parse(l) {
             Ok(stack) => {
-                let score = stack.iter().fold(0, |acc, char| {
+                let score = stack.iter().rev().fold(0, |acc, char| {
                     acc * 5
                         + match char {
                             '(' => 1,
