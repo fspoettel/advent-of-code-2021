@@ -49,3 +49,55 @@ fn test_median() {
 fn test_nth_triangular() {
     assert_eq!(nth_triangular(7), 28);
 }
+
+// Grid Helpers
+
+/// A point describes a location `x,y`.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct Point(pub usize, pub usize);
+
+/// Get all neighbors for a point, respecting the boundaries of the input.
+pub fn neighbors(point: Point, max_x: usize, max_y: usize) -> Vec<Point> {
+    let mut neighbors: Vec<Point> = Vec::new();
+    let Point(x, y) = point;
+
+    let bound_top = y == 0;
+    let bound_left = x == 0;
+
+    let bound_bottom = y == max_y;
+    let bound_right = x == max_x;
+
+    if !bound_top {
+        neighbors.push(Point(x, y - 1));
+
+        if !bound_left {
+            neighbors.push(Point(x - 1, y - 1));
+        }
+
+        if !bound_right {
+            neighbors.push(Point(x + 1, y - 1));
+        }
+    }
+
+    if !bound_bottom {
+        neighbors.push(Point(x, y + 1));
+
+        if !bound_left {
+            neighbors.push(Point(x - 1, y + 1));
+        }
+
+        if !bound_right {
+            neighbors.push(Point(x + 1, y + 1));
+        }
+    }
+
+    if !bound_left {
+        neighbors.push(Point(x - 1, y));
+    }
+
+    if !bound_right {
+        neighbors.push(Point(x + 1, y));
+    }
+
+    neighbors
+}
