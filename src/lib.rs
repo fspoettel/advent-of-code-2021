@@ -52,11 +52,11 @@ fn test_nth_triangular() {
 
 // Grid Helpers
 
-/// A point describes a location `x,y`.
+/// A point describes a location `x,y` in a grid with two axis.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Point(pub usize, pub usize);
 
-/// Get all neighbors for a point, respecting the boundaries of the input.
+/// Get all neighbors for a point in a grid, respecting the boundaries of the input.
 pub fn neighbors(point: Point, max_x: usize, max_y: usize) -> Vec<Point> {
     let mut neighbors: Vec<Point> = Vec::new();
     let Point(x, y) = point;
