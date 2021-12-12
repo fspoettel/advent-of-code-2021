@@ -1,16 +1,16 @@
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]
-struct Graph {
+struct Graph<'a> {
     // nodes are stored as <id, size> map where size is a boolean.
     // `true` indicates that a room is big, `false` small.
-    nodes: HashMap<String, bool>,
+    nodes: HashMap<&'a str, bool>,
     // edges are stored as an adjacency list for each node.
-    edges: HashMap<String, HashSet<String>>,
+    edges: HashMap<&'a str, HashSet<&'a str>>,
 }
 
-impl Graph {
-    fn get_adjacent_nodes(&self, node_id: &str) -> Vec<&String> {
+impl Graph<'_> {
+    fn get_adjacent_nodes(&self, node_id: &str) -> Vec<&&str> {
         self.edges.get(node_id).unwrap().iter().collect()
     }
 }
@@ -22,20 +22,14 @@ fn parse_input(input: &str) -> Graph {
     };
 
     input.lines().for_each(|l| {
-        let mut node_pair = l
-            .split('-')
-            .map(|id| (id.to_string(), id.to_uppercase() == id));
+        let mut node_pair = l.split('-').map(|id| (id, id.to_uppercase() == id));
 
         let (from, from_type) = node_pair.next().unwrap();
         let (to, to_type) = node_pair.next().unwrap();
 
-        graph.nodes.insert(from.clone(), from_type);
-        graph.nodes.insert(to.clone(), to_type);
-        graph
-            .edges
-            .entry(from.clone())
-            .or_default()
-            .insert(to.clone());
+        graph.nodes.insert(from, from_type);
+        graph.nodes.insert(to, to_type);
+        graph.edges.entry(from).or_default().insert(to);
         graph.edges.entry(to).or_default().insert(from);
     });
 
@@ -52,6 +46,9 @@ fn search(graph: &Graph, seen: &HashSet<&str>, id: &str, small_room_counter: u8)
     if seen.contains(&id) {
         if id == "start" {
             return 0;
+        // in part one, any small room can only be visited once.
+        // in part two, **one** room may be visited twice.
+        // to reflect that, a counter is decremented the first time a small room is encountered.
         } else if !*graph.nodes.get(id).unwrap() {
             if small_room_counter == 0 {
                 return 0;
@@ -65,7 +62,7 @@ fn search(graph: &Graph, seen: &HashSet<&str>, id: &str, small_room_counter: u8)
     seen_here.insert(id);
 
     let result = graph
-        .get_adjacent_nodes(&id)
+        .get_adjacent_nodes(id)
         .iter()
         .map(|adjacent_node| search(graph, &seen_here, adjacent_node, small_room_counter))
         .sum();
