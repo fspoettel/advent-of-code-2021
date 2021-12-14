@@ -1,11 +1,11 @@
 use itertools::Itertools;
 use std::collections::HashMap;
 
-pub fn bits_to_u32(bits: &[bool]) -> u32 {
+pub fn arr_to_int(bits: &[bool]) -> u32 {
     bits.iter().fold(0, |acc, &b| acc * 2 + (b as u32))
 }
 
-pub fn byte_str_to_u32(str: &str) -> u32 {
+pub fn str_to_int(str: &str) -> u32 {
     u32::from_str_radix(str, 2).unwrap()
 }
 
@@ -33,7 +33,7 @@ pub fn part_one(input: &str) -> u32 {
     // derive epsilon by flipping each bit of gamma.
     let epsilon = gamma.iter().map(|b| !(*b)).collect_vec();
 
-    bits_to_u32(&gamma) * bits_to_u32(&epsilon)
+    arr_to_int(&gamma) * arr_to_int(&epsilon)
 }
 
 pub fn part_two(input: &str) -> u32 {
@@ -45,7 +45,7 @@ pub fn part_two(input: &str) -> u32 {
     let co2_rating =
         find_line_by_bit_criteria(|a, b| if a.len() >= b.len() { b } else { a }, &lines);
 
-    byte_str_to_u32(oxy_rating) * byte_str_to_u32(co2_rating)
+        str_to_int(oxy_rating) * str_to_int(co2_rating)
 }
 
 fn find_line_by_bit_criteria<'a>(

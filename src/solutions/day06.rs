@@ -2,7 +2,10 @@ static REPRO_INTERVAL_INITIAL: usize = 9;
 static REPRO_INTERVAL: usize = 7;
 
 fn get_og_fishes(input: &str) -> Vec<usize> {
-    input.split(',').map(|s| s.parse().unwrap()).collect()
+    input
+        .split(',')
+        .map(|s| s.trim().parse().unwrap())
+        .collect()
 }
 
 fn project_population(members: Vec<usize>, generations: &mut [usize]) -> usize {

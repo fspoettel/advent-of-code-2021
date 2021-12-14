@@ -1,5 +1,8 @@
 use std::collections::{HashMap, HashSet};
 
+static START: &str = "start";
+static END: &str = "end";
+
 #[derive(Debug)]
 struct Graph<'a> {
     // nodes are stored as <id, size> map where size is a boolean.
@@ -10,16 +13,20 @@ struct Graph<'a> {
 }
 
 impl Graph<'_> {
+    fn new() -> Self {
+        Graph {
+            nodes: HashMap::new(),
+            edges: HashMap::new(),
+        }
+    }
+
     fn get_adjacent_nodes(&self, node_id: &str) -> Vec<&&str> {
         self.edges.get(node_id).unwrap().iter().collect()
     }
 }
 
 fn parse_input(input: &str) -> Graph {
-    let mut graph = Graph {
-        nodes: HashMap::new(),
-        edges: HashMap::new(),
-    };
+    let mut graph = Graph::new();
 
     input.lines().for_each(|l| {
         let mut node_pair = l.split('-').map(|id| (id, id.to_uppercase() == id));
@@ -39,12 +46,12 @@ fn parse_input(input: &str) -> Graph {
 fn search(graph: &Graph, seen: &HashSet<&str>, id: &str, small_room_counter: u8) -> u32 {
     let mut small_room_counter = small_room_counter;
 
-    if id == "end" {
+    if id == END {
         return 1;
     }
 
     if seen.contains(&id) {
-        if id == "start" {
+        if id == START {
             return 0;
         // in part one, any small room can only be visited once.
         // in part two, **one** room may be visited twice.
@@ -73,13 +80,13 @@ fn search(graph: &Graph, seen: &HashSet<&str>, id: &str, small_room_counter: u8)
 pub fn part_one(input: &str) -> u32 {
     let graph = parse_input(input);
     let seen: HashSet<&str> = HashSet::new();
-    search(&graph, &seen, "start", 0)
+    search(&graph, &seen, START, 0)
 }
 
 pub fn part_two(input: &str) -> u32 {
     let graph = parse_input(input);
     let seen: HashSet<&str> = HashSet::new();
-    search(&graph, &seen, "start", 1)
+    search(&graph, &seen, START, 1)
 }
 
 #[test]
