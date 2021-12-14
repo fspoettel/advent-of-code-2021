@@ -66,4 +66,4 @@ FILE="src/solutions/mod.rs";
 grep -qF -- "$LINE" "$FILE" || echo "$LINE" >> "$FILE";
 echo "Linked new module in \`$FILE\`";
 
-echo "Have fun! 🎄";
+echo "Done! 🎄";

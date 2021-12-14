@@ -39,8 +39,8 @@
 ### Setup new day
 
 ```sh
-# example: `./scaffold.sh 1`
-./scaffold.sh <day>
+# example: `./scripts/scaffold.sh 1`
+./scripts/scaffold.sh <day>
 
 # output:
 # Created module `src/solutions/day01.rs`
@@ -48,7 +48,7 @@
 # Created example file `src/examples/day01.txt`
 # Linked new module in `src/main.rs`
 # Linked new module in `src/solutions/mod.rs`
-# Have fun! 🎄
+# Done! 🎄
 ```
 
 Every solution file has _unit tests_ referencing the example input file. You can use these tests to develop and debug your solution. When editing a solution file, `rust-analyzer` will display buttons for these actions above the unit tests.
@@ -56,8 +56,8 @@ Every solution file has _unit tests_ referencing the example input file. You can
 ### Download inputs for a day
 
 ```sh
-# example: `./download.sh 1`
-./download.sh <day>
+# example: `./scripts/download.sh 1`
+./scripts/download.sh <day>
 
 # output:
 # Invoking `aoc` cli...
@@ -66,7 +66,7 @@ Every solution file has _unit tests_ referencing the example input file. You can
 # Saving puzzle input to "/tmp/..."...
 # Done!
 # Wrote input to `src/inputs/day01.txt`...
-# Have fun! 🎄
+# Done! 🎄
 ```
 
 Puzzle inputs are not checked into git. [See here](https://old.reddit.com/r/adventofcode/comments/k99rod/sharing_input_data_were_we_requested_not_to/gf2ukkf/?context=3) why.
