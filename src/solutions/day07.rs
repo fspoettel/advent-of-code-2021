@@ -29,16 +29,21 @@ pub fn part_two(input: &str) -> i32 {
         .unwrap()
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 7);
-    assert_eq!(part_one(&input), 37);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 7);
-    assert_eq!(part_two(&input), 168);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 7);
+        assert_eq!(part_one(&input), 37);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 7);
+        assert_eq!(part_two(&input), 168);
+    }
 }

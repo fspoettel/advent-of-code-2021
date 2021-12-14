@@ -137,16 +137,21 @@ pub fn part_two(input: &str) -> u32 {
     count_grid(&code)
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 13);
-    assert_eq!(part_one(&input), 17);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 13);
-    assert_eq!(part_two(&input), 16);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 13);
+        assert_eq!(part_one(&input), 17);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 13);
+        assert_eq!(part_two(&input), 16);
+    }
 }

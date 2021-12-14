@@ -39,17 +39,6 @@ pub fn nth_triangular<T: PrimInt>(a: T) -> T {
     a * (a + NumCast::from(1).unwrap()) / NumCast::from(2).unwrap()
 }
 
-#[test]
-fn test_median() {
-    assert_eq!(median(&mut [1, 4, 7].to_vec()), 4);
-    assert_eq!(median(&mut [3, 10, 36, 255, 79, 24, 5, 8].to_vec()), 17);
-}
-
-#[test]
-fn test_nth_triangular() {
-    assert_eq!(nth_triangular(7), 28);
-}
-
 // Grid Helpers
 
 /// A point describes a location `x,y` in a grid with two axis.
@@ -100,4 +89,20 @@ pub fn neighbors(point: Point, max_x: usize, max_y: usize) -> Vec<Point> {
     }
 
     neighbors
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_median() {
+        assert_eq!(median(&mut [1, 4, 7].to_vec()), 4);
+        assert_eq!(median(&mut [3, 10, 36, 255, 79, 24, 5, 8].to_vec()), 17);
+    }
+
+    #[test]
+    fn test_nth_triangular() {
+        assert_eq!(nth_triangular(7), 28);
+    }
 }

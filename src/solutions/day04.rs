@@ -123,16 +123,21 @@ pub fn part_two(input: &str) -> u32 {
     find_last_winner(&draw, &mut boards)
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 4);
-    assert_eq!(part_one(&input), 4512);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 4);
-    assert_eq!(part_two(&input), 1924);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 4);
+        assert_eq!(part_one(&input), 4512);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 4);
+        assert_eq!(part_two(&input), 1924);
+    }
 }

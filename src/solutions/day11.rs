@@ -102,16 +102,21 @@ pub fn part_two(input: &str) -> usize {
     index + 1
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 11);
-    assert_eq!(part_one(&input), 1656);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 11);
-    assert_eq!(part_two(&input), 195);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 11);
+        assert_eq!(part_one(&input), 1656);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 11);
+        assert_eq!(part_two(&input), 195);
+    }
 }

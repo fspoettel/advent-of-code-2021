@@ -25,16 +25,21 @@ pub fn part_two(input: &str) -> u32 {
     count_increases(it)
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 1);
-    assert_eq!(part_one(&input), 7);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 1);
-    assert_eq!(part_two(&input), 5);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 1);
+        assert_eq!(part_one(&input), 7);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 1);
+        assert_eq!(part_two(&input), 5);
+    }
 }

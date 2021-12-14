@@ -56,16 +56,21 @@ pub fn part_two(input: &str) -> i32 {
     pos.x * pos.y
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 2);
-    assert_eq!(part_one(&input), 150);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 2);
-    assert_eq!(part_two(&input), 900);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 2);
+        assert_eq!(part_one(&input), 150);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 2);
+        assert_eq!(part_two(&input), 900);
+    }
 }

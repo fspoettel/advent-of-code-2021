@@ -89,16 +89,21 @@ pub fn part_two(input: &str) -> u32 {
     search(&graph, &seen, START, 1)
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 12);
-    assert_eq!(part_one(&input), 226);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 12);
-    assert_eq!(part_two(&input), 3509);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 12);
+        assert_eq!(part_one(&input), 226);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 12);
+        assert_eq!(part_two(&input), 3509);
+    }
 }

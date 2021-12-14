@@ -28,18 +28,23 @@ pub fn part_two(input: &str) -> u32 {
     0
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", day);
-    assert_eq!(part_one(&input), 0);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", day);
-    assert_eq!(part_two(&input), 0);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", day);
+        assert_eq!(part_one(&input), 0);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", day);
+        assert_eq!(part_two(&input), 0);
+    }
 }
 EOF
 

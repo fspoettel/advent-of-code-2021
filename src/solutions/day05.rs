@@ -72,16 +72,21 @@ pub fn part_two(input: &str) -> u32 {
     grid.overlaps()
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 5);
-    assert_eq!(part_one(&input), 5);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 5);
-    assert_eq!(part_two(&input), 12);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 5);
+        assert_eq!(part_one(&input), 5);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 5);
+        assert_eq!(part_two(&input), 12);
+    }
 }

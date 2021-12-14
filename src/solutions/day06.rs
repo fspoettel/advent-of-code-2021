@@ -61,16 +61,21 @@ pub fn part_two(input: &str) -> usize {
     project_population(get_og_fishes(input), &mut [0; 256])
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 6);
-    assert_eq!(part_one(&input), 5934);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 6);
-    assert_eq!(part_two(&input), 26984457539);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 6);
+        assert_eq!(part_one(&input), 5934);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 6);
+        assert_eq!(part_two(&input), 26984457539);
+    }
 }

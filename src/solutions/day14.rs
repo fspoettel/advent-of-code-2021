@@ -97,16 +97,21 @@ pub fn part_two(input: &str) -> u64 {
     polymer.expand_times(40, &rules).delta()
 }
 
-#[test]
-fn test_part_one() {
-    use aoc::read_file;
-    let input = read_file("examples", 14);
-    assert_eq!(part_one(&input), 1588);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_part_two() {
-    use aoc::read_file;
-    let input = read_file("examples", 14);
-    assert_eq!(part_two(&input), 2188189693529);
+    #[test]
+    fn test_part_one() {
+        use aoc::read_file;
+        let input = read_file("examples", 14);
+        assert_eq!(part_one(&input), 1588);
+    }
+
+    #[test]
+    fn test_part_two() {
+        use aoc::read_file;
+        let input = read_file("examples", 14);
+        assert_eq!(part_two(&input), 2188189693529);
+    }
 }
