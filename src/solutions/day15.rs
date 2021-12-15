@@ -1,26 +1,13 @@
-/// implementation of Dijkstra's algorithm.
-/// borrows from the example found in the [Rust Docs](https://doc.rust-lang.org/std/collections/binary_heap/index.html#examples).
+/// implementation of Dijkstra's algorithm for a 2d grid.
+/// borrows from the example found in the [rust docs](https://doc.rust-lang.org/std/collections/binary_heap/index.html#examples).
+/// in contrast to the example, we do not create a directed graph but work with the supplied grid directly.
 /// for further information, see:
 /// [Wikipedia](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) |
 /// [Introduction to the A* Algorithm](https://www.redblobgames.com/pathfinding/a-star/introduction.html).
 mod shortest_path {
+    use crate::helpers::grid::{neighbors, Point};
     use std::cmp::Ordering;
     use std::collections::BinaryHeap;
-
-    /// model the grid as a directed graph.
-    pub type Graph = Vec<Node>;
-
-    /// each node in the graph is an adjacency list of neighbors.
-    /// the example start position would look like:
-    /// vec![Edge { cost: 1, node: 1 }, { cost: 1, node: 1 }]
-    pub type Node = Vec<Edge>;
-
-    // each edge contains the connected node and the cost to move to that node.
-    #[derive(Clone, Debug)]
-    pub struct Edge {
-        pub node: usize,
-        pub cost: usize,
-    }
 
     // while performing the search, track a sorted list of candidates (=state) to visit next on a priority queue.
     #[derive(Copy, Clone, Eq, PartialEq)]
@@ -31,7 +18,7 @@ mod shortest_path {
 
     /// the algorithm expects a `min-heap` priority queue as frontier.
     /// the default std. lib implementation is a `max-heap`, so the sort order needs to be flipped for state values.
-    /// also adds a tie breaker based on position.
+    /// also adds a tie breaker based on position. see [rust docs](https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html#min-heap)
     impl Ord for State {
         fn cmp(&self, other: &Self) -> Ordering {
             other
@@ -47,14 +34,17 @@ mod shortest_path {
         }
     }
 
-    pub fn shortest_path(
-        graph: &[Vec<Edge>],
-        start_node: usize,
-        target_node: usize,
-    ) -> Option<usize> {
+    pub fn shortest_path(grid: &[Vec<u32>]) -> Option<usize> {
+        let y_ceil = grid.len();
+        let x_ceil = grid[0].len();
+
         // dist[node] = current shortest distance from `start` to `node`.
-        let mut dist: Vec<_> = (0..graph.len()).map(|_| usize::MAX).collect();
+        let mut dist: Vec<_> = (0..(y_ceil * x_ceil)).map(|_| usize::MAX).collect();
+
         let mut frontier = BinaryHeap::new();
+
+        let start_node = Point(0, 0).to_id(x_ceil);
+        let target_node = Point(y_ceil - 1, x_ceil - 1).to_id(x_ceil);
 
         // initialize start with a zero cost.
         dist[start_node] = 0;
@@ -75,10 +65,15 @@ mod shortest_path {
             }
 
             // see if we can find a path with a lower cost than previous paths for any adjacent nodes.
-            for edge in &graph[position] {
+            for point in &neighbors(
+                Point(position % x_ceil, position / x_ceil),
+                x_ceil - 1,
+                y_ceil - 1,
+                false,
+            ) {
                 let next = State {
-                    cost: cost + edge.cost,
-                    position: edge.node,
+                    cost: cost + grid[point.1][point.0] as usize,
+                    position: point.to_id(x_ceil),
                 };
 
                 // if so, add it to the frontier and continue.
@@ -93,8 +88,7 @@ mod shortest_path {
     }
 }
 
-use self::shortest_path::{shortest_path, Edge, Graph};
-use crate::helpers::grid::{neighbors, Point};
+use self::shortest_path::shortest_path;
 
 type Row = Vec<u32>;
 type Grid = Vec<Row>;
@@ -106,38 +100,8 @@ fn parse_input(input: &str) -> Grid {
         .collect()
 }
 
-/// transforms the 2d grid to a directed graph, also providing `start` and `target` node.
-fn grid_to_graph(grid: &[Row]) -> (Graph, usize, usize) {
-    let y_ceil = grid.len();
-    let x_ceil = grid[0].len();
-
-    let mut graph: Graph = vec![Vec::new(); y_ceil * x_ceil];
-
-    // add an edge to the adjacency list for every neighbor.
-    grid.iter().enumerate().for_each(|(y, row)| {
-        row.iter().enumerate().for_each(|(x, _)| {
-            let point = Point(x, y);
-            neighbors(point, x_ceil - 1, y_ceil - 1, false)
-                .into_iter()
-                .for_each(|p| {
-                    graph[point.to_id(x_ceil)].push(Edge {
-                        cost: grid[p.1][p.0] as usize,
-                        node: p.to_id(x_ceil),
-                    });
-                });
-        })
-    });
-
-    let start_node = Point(0, 0).to_id(x_ceil);
-    let target_node = Point(y_ceil - 1, x_ceil - 1).to_id(x_ceil);
-
-    (graph, start_node, target_node)
-}
-
 pub fn part_one(input: &str) -> u32 {
-    let grid = parse_input(input);
-    let (graph, start_node, target_node) = grid_to_graph(&grid);
-    shortest_path(&graph, start_node, target_node).unwrap() as u32
+    shortest_path(&parse_input(input)).unwrap() as u32
 }
 
 pub fn part_two(input: &str) -> u32 {
@@ -166,8 +130,7 @@ pub fn part_two(input: &str) -> u32 {
         })
         .collect();
 
-    let (graph, start_node, target_node) = grid_to_graph(&expanded);
-    shortest_path(&graph, start_node, target_node).unwrap() as u32
+    shortest_path(&expanded).unwrap() as u32
 }
 
 #[cfg(test)]
