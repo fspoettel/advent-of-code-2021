@@ -10,7 +10,7 @@ struct Position {
 }
 
 fn to_instruction(line: &str) -> Instruction {
-    let (direction, _value) = line.split_once(" ").unwrap();
+    let (direction, _value) = line.split_once(' ').unwrap();
 
     Instruction {
         direction,

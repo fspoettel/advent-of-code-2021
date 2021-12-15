@@ -1,4 +1,4 @@
-use crate::helpers::grid::{neighbors, Point};
+use crate::helpers::grid::Point;
 use std::collections::HashSet;
 
 static OCTOPUS_ROWS: usize = 10;
@@ -44,7 +44,7 @@ fn tick(grid: &mut Grid, flashed: &mut HashSet<Point>, points: &[Point]) {
                 grid,
                 flashed,
                 // when an octopus flashes, it increments all neighbors.
-                &neighbors(p, OCTOPUS_COLS - 1, OCTOPUS_ROWS - 1, true),
+                &p.neighbors(OCTOPUS_COLS - 1, OCTOPUS_ROWS - 1, true),
             );
         }
     });

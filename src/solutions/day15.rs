@@ -5,7 +5,7 @@
 /// [Wikipedia](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) |
 /// [Introduction to the A* Algorithm](https://www.redblobgames.com/pathfinding/a-star/introduction.html).
 mod shortest_path {
-    use crate::helpers::grid::{neighbors, Point};
+    use crate::helpers::grid::Point;
     use std::cmp::Ordering;
     use std::collections::BinaryHeap;
 
@@ -35,16 +35,16 @@ mod shortest_path {
     }
 
     pub fn shortest_path(grid: &[Vec<u32>]) -> Option<usize> {
-        let y_ceil = grid.len();
-        let x_ceil = grid[0].len();
+        let height = grid.len();
+        let width = grid[0].len();
 
         // dist[node] = current shortest distance from `start` to `node`.
-        let mut dist: Vec<_> = (0..(y_ceil * x_ceil)).map(|_| usize::MAX).collect();
+        let mut dist: Vec<_> = (0..(height * width)).map(|_| usize::MAX).collect();
 
         let mut frontier = BinaryHeap::new();
 
-        let start_node = Point(0, 0).to_id(x_ceil);
-        let target_node = Point(y_ceil - 1, x_ceil - 1).to_id(x_ceil);
+        let start_node = Point(0, 0).to_id(width);
+        let target_node = Point(height - 1, width - 1).to_id(width);
 
         // initialize start with a zero cost.
         dist[start_node] = 0;
@@ -65,15 +65,10 @@ mod shortest_path {
             }
 
             // see if we can find a path with a lower cost than previous paths for any adjacent nodes.
-            for point in &neighbors(
-                Point(position % x_ceil, position / x_ceil),
-                x_ceil - 1,
-                y_ceil - 1,
-                false,
-            ) {
+            for point in Point::from_id(position, width).neighbors(width - 1, height - 1, false) {
                 let next = State {
                     cost: cost + grid[point.1][point.0] as usize,
-                    position: point.to_id(x_ceil),
+                    position: point.to_id(width),
                 };
 
                 // if so, add it to the frontier and continue.
@@ -107,19 +102,19 @@ pub fn part_one(input: &str) -> u32 {
 pub fn part_two(input: &str) -> u32 {
     let grid = parse_input(input);
 
-    let y_ceil = grid.len();
-    let x_ceil = grid[0].len();
+    let height = grid.len();
+    let width = grid[0].len();
 
     let expanded: Grid = (0..(5 * grid.len()))
         .map(|y| {
             (0..(5 * grid[0].len()))
                 .map(|x| {
                     // increment grows by one with every horizontal *and* vertical tile.
-                    let x_increment = (x / x_ceil) as u32;
-                    let y_increment = (y / y_ceil) as u32;
+                    let x_increment = (x / width) as u32;
+                    let y_increment = (y / height) as u32;
 
                     // each individual value can be derived from the original value and the current distance to it.
-                    let cost = grid[x % x_ceil][y % y_ceil] + x_increment + y_increment;
+                    let cost = grid[x % width][y % height] + x_increment + y_increment;
                     if cost == 9 {
                         cost
                     } else {

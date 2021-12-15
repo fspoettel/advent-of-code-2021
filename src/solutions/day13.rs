@@ -18,8 +18,8 @@ fn parse_input(input: &str) -> (Grid, Instructions) {
     let mut points: Points = Vec::new();
     let mut instructions: Instructions = Vec::new();
 
-    let mut x_ceil: usize = 0;
-    let mut y_ceil: usize = 0;
+    let mut width: usize = 0;
+    let mut height: usize = 0;
 
     input.lines().for_each(|l| {
         // line is an instruction.
@@ -28,10 +28,10 @@ fn parse_input(input: &str) -> (Grid, Instructions) {
 
             // infer grid size from first instructions.
             // looking at max. point size might fail if last lines or columns are empty.
-            if x_ceil == 0 || y_ceil == 0 {
+            if width == 0 || height == 0 {
                 match instruction {
-                    Instruction::X(x) => x_ceil = max(x * 2 + 1, x_ceil),
-                    Instruction::Y(y) => y_ceil = max(y * 2 + 1, y_ceil),
+                    Instruction::X(x) => width = max(x * 2 + 1, width),
+                    Instruction::Y(y) => height = max(y * 2 + 1, height),
                 }
             }
 
@@ -42,7 +42,7 @@ fn parse_input(input: &str) -> (Grid, Instructions) {
         }
     });
 
-    (make_grid(&points, x_ceil, y_ceil), instructions)
+    (make_grid(&points, width, height), instructions)
 }
 
 fn parse_point(l: &str) -> Point {
@@ -64,8 +64,8 @@ fn parse_instruction(l: &str) -> Instruction {
     }
 }
 
-fn make_grid(points: &[Point], x_ceil: usize, y_ceil: usize) -> Grid {
-    let mut grid: Grid = vec![vec![false; x_ceil]; y_ceil];
+fn make_grid(points: &[Point], width: usize, height: usize) -> Grid {
+    let mut grid: Grid = vec![vec![false; width]; height];
 
     for Point(x, y) in points {
         grid[*y][*x] = true;
@@ -74,41 +74,41 @@ fn make_grid(points: &[Point], x_ceil: usize, y_ceil: usize) -> Grid {
     grid
 }
 
-fn fold_y(grid: &[Line], fold_at: usize, x_ceil: usize, y_ceil: usize) -> Grid {
+fn fold_y(grid: &[Line], fold_at: usize, width: usize, height: usize) -> Grid {
     let mut points: Points = Vec::new();
 
     for y in 0..fold_at {
-        for x in 0..x_ceil {
-            if grid[y][x] || grid[y_ceil - y - 1][x] {
+        for x in 0..width {
+            if grid[y][x] || grid[height - y - 1][x] {
                 points.push(Point(x, y));
             }
         }
     }
 
-    make_grid(&points, x_ceil, fold_at)
+    make_grid(&points, width, fold_at)
 }
 
-fn fold_x(grid: &[Line], fold_at: usize, x_ceil: usize, y_ceil: usize) -> Grid {
+fn fold_x(grid: &[Line], fold_at: usize, width: usize, height: usize) -> Grid {
     let mut points: Points = Vec::new();
 
-    for y in 0..y_ceil {
+    for y in 0..height {
         for x in 0..fold_at {
-            if grid[y][x] || grid[y][x_ceil - x - 1] {
+            if grid[y][x] || grid[y][width - x - 1] {
                 points.push(Point(x, y));
             }
         }
     }
 
-    make_grid(&points, fold_at, y_ceil)
+    make_grid(&points, fold_at, height)
 }
 
 fn fold(grid: &[Line], instruction: &Instruction) -> Grid {
-    let y_ceil = grid.len();
-    let x_ceil = grid[0].len();
+    let height = grid.len();
+    let width = grid[0].len();
 
     match instruction {
-        Instruction::X(fold_at) => fold_x(grid, *fold_at, x_ceil, y_ceil),
-        Instruction::Y(fold_at) => fold_y(grid, *fold_at, x_ceil, y_ceil),
+        Instruction::X(fold_at) => fold_x(grid, *fold_at, width, height),
+        Instruction::Y(fold_at) => fold_y(grid, *fold_at, width, height),
     }
 }
 

@@ -5,13 +5,12 @@ use itertools::Itertools;
 pub fn part_one(input: &str) -> usize {
     input
         .lines()
-        .map(|l| {
+        .flat_map(|l| {
             l.split(" | ").last().unwrap().split(' ').filter(|s| {
                 let len = s.len();
                 (2..=4).contains(&len) || len == 7
             })
         })
-        .flatten()
         .count()
 }
 
