@@ -5,7 +5,7 @@ use std::fmt::Debug;
 pub struct Point(pub usize, pub usize);
 
 impl Point {
-    pub fn to_id(&self, x_ceil: usize) -> usize {
+    pub fn to_id(self, x_ceil: usize) -> usize {
         self.0 + x_ceil * self.1
     }
 }

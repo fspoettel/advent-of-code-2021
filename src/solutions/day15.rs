@@ -1,7 +1,3 @@
-use crate::helpers::grid::{neighbors, Point};
-
-use self::shortest_path::{Graph, Edge, shortest_path};
-
 /// implementation of Dijkstra's algorithm.
 /// borrows from the example found in the [Rust Docs](https://doc.rust-lang.org/std/collections/binary_heap/index.html#examples).
 /// for further information, see:
@@ -33,8 +29,8 @@ mod shortest_path {
         position: usize,
     }
 
-    /// the algorithm expects a `min-heap` PriorityQueue as frontier.
-    /// the default prio. queue in the std. lib is a `max-heap` so we have to flip the sort implementation.
+    /// the algorithm expects a `min-heap` priority queue as frontier.
+    /// the default std. lib implementation is a `max-heap`, so the sort order needs to be flipped for state values.
     /// also adds a tie breaker based on position.
     impl Ord for State {
         fn cmp(&self, other: &Self) -> Ordering {
@@ -51,7 +47,11 @@ mod shortest_path {
         }
     }
 
-    pub fn shortest_path(graph: &[Vec<Edge>], start_node: usize, target_node: usize) -> Option<usize> {
+    pub fn shortest_path(
+        graph: &[Vec<Edge>],
+        start_node: usize,
+        target_node: usize,
+    ) -> Option<usize> {
         // dist[node] = current shortest distance from `start` to `node`.
         let mut dist: Vec<_> = (0..graph.len()).map(|_| usize::MAX).collect();
         let mut frontier = BinaryHeap::new();
@@ -93,6 +93,9 @@ mod shortest_path {
     }
 }
 
+use self::shortest_path::{shortest_path, Edge, Graph};
+use crate::helpers::grid::{neighbors, Point};
+
 type Row = Vec<u32>;
 type Grid = Vec<Row>;
 
@@ -103,13 +106,14 @@ fn parse_input(input: &str) -> Grid {
         .collect()
 }
 
-/// transforms the 2D grid to a directed graph, also providing `start` and `target` node.
+/// transforms the 2d grid to a directed graph, also providing `start` and `target` node.
 fn grid_to_graph(grid: &[Row]) -> (Graph, usize, usize) {
     let y_ceil = grid.len();
     let x_ceil = grid[0].len();
 
     let mut graph: Graph = vec![Vec::new(); y_ceil * x_ceil];
 
+    // add an edge to the adjacency list for every neighbor.
     grid.iter().enumerate().for_each(|(y, row)| {
         row.iter().enumerate().for_each(|(x, _)| {
             let point = Point(x, y);
@@ -146,13 +150,16 @@ pub fn part_two(input: &str) -> u32 {
         .map(|y| {
             (0..(5 * grid[0].len()))
                 .map(|x| {
+                    // increment grows by one with every horizontal *and* vertical tile.
                     let x_increment = (x / x_ceil) as u32;
                     let y_increment = (y / y_ceil) as u32;
+
+                    // each individual value can be derived from the original value and the current distance to it.
                     let cost = grid[x % x_ceil][y % y_ceil] + x_increment + y_increment;
-                    if cost < 10 {
+                    if cost == 9 {
                         cost
                     } else {
-                        cost - 9
+                        cost % 9
                     }
                 })
                 .collect()
