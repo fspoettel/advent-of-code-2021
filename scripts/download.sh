@@ -24,9 +24,14 @@ tmp_file_path="$tmp_dir/input";
 
 aoc download --day $day --file $tmp_file_path;
 cat $tmp_file_path > $input_path;
-echo "Wrote input to \`$input_path\`...";
+echo "Wrote input to \"$input_path\"...";
 
-echo "Done! 🎄";
+cat <<EOF
+   _==_ _
+ _,(",)|_|
+  \/. \-|
+__( :  )|_  Done!
+EOF
 
 # Make sure it gets removed even if the script exits abnormally.
 trap "exit 1"           HUP INT PIPE QUIT TERM

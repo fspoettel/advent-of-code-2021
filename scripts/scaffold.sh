@@ -17,9 +17,8 @@ example_path="src/examples/$filename.txt";
 module_path="src/solutions/$filename.rs";
 
 touch $module_path;
-echo "Created module \`$module_path\`";
 
-cat > "src/solutions/$filename.rs" <<EOF
+cat > $module_path <<EOF
 pub fn part_one(input: &str) -> u32 {
     0
 }
@@ -48,22 +47,30 @@ mod tests {
 }
 EOF
 
-perl -pi -e "s,day,$day,g" "src/solutions/$filename.rs";
+perl -pi -e "s,day,$day,g" $module_path;
+
+echo "Created module \"$module_path\"";
 
 touch $input_path;
-echo "Created input file \`$input_path\`";
+echo "Created input file \"$input_path\"";
 
 touch $example_path;
-echo "Created example file \`$example_path\`";
+echo "Created example file \"$example_path\"";
 
 line="        $day => solve_day!($filename, &input),"
 perl -pi -le "print '$line' if(/^*.day not solved/);" "src/main.rs";
 
-echo "Linked new module in \`src/main.rs\`";
+echo "Linked new module in \"src/main.rs\"";
 
 LINE="pub mod $filename;";
 FILE="src/solutions/mod.rs";
 grep -qF -- "$LINE" "$FILE" || echo "$LINE" >> "$FILE";
-echo "Linked new module in \`$FILE\`";
+echo "Linked new module in \"$FILE\"";
 
-echo "Done! 🎄";
+
+cat <<EOF
+   _==_ _
+ _,(",)|_|
+  \/. \-|
+__( :  )|_  Done!
+EOF
