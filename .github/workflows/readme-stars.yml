@@ -11,9 +11,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: k2bd/advent-readme-stars@v1
         with:
-          userId: 3036
+          userId: ${{ secrets.AOC_USER_ID }}
           sessionCookie: ${{ secrets.AOC_SESSION }}
-          year: 2021
+          year: ${{ secrets.AOC_YEAR }}
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Update README stars
