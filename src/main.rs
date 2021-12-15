@@ -1,10 +1,11 @@
+use crate::solutions::*;
 use aoc::read_file;
 use std::env;
 use std::fmt::Display;
 use std::time::Instant;
 
+mod helpers;
 mod solutions;
-use crate::solutions::*;
 
 static ANSI_ITALIC: &str = "\x1b[3m";
 static ANSI_BOLD: &str = "\x1b[1m";
@@ -57,6 +58,7 @@ fn main() {
         12 => solve_day!(day12, &input),
         13 => solve_day!(day13, &input),
         14 => solve_day!(day14, &input),
+        15 => solve_day!(day15, &input),
         _ => println!("day not solved: {}", day),
     }
 }

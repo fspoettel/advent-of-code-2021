@@ -1,5 +1,5 @@
 #![allow(clippy::needless_range_loop)]
-use aoc::Point;
+use crate::helpers::grid::Point;
 use std::cmp::max;
 
 type Points = Vec<Point>;

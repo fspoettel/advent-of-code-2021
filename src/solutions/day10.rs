@@ -1,4 +1,4 @@
-use aoc::median;
+use crate::helpers::math::median;
 
 /// tracks open tokens (e.g. `(`) in sequence of occurence.
 type CharacterStack = Vec<char>;

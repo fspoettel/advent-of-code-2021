@@ -1,3 +1,5 @@
+use crate::helpers::math::{median, nth_triangular};
+
 fn parse_input(input: &str) -> Vec<i32> {
     input
         .lines()
@@ -10,7 +12,7 @@ fn parse_input(input: &str) -> Vec<i32> {
 
 pub fn part_one(input: &str) -> i32 {
     let mut positions = parse_input(input);
-    let median = aoc::median(&mut positions);
+    let median = median(&mut positions);
     positions.iter().map(|x| (x - median).abs()).sum()
 }
 
@@ -22,7 +24,7 @@ pub fn part_two(input: &str) -> i32 {
         .map(|i| {
             positions
                 .iter()
-                .map(|p| aoc::nth_triangular((p - i).abs()))
+                .map(|p| nth_triangular((p - i).abs()))
                 .sum()
         })
         .min()

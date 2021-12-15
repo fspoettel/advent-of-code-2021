@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use itertools::{Itertools, MinMaxResult};
+use std::collections::HashMap;
 
 type Pair = (char, char);
 type Rules = HashMap<Pair, char>;
@@ -61,10 +61,9 @@ impl Polymer {
     }
 
     fn delta(&self) -> u64 {
-        let min_max = self.characters.values().minmax();
-        match min_max {
+        match self.characters.values().minmax() {
             MinMaxResult::MinMax(a, b) => b - a,
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }

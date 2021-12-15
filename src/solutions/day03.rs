@@ -45,7 +45,7 @@ pub fn part_two(input: &str) -> u32 {
     let co2_rating =
         find_line_by_bit_criteria(|a, b| if a.len() >= b.len() { b } else { a }, &lines);
 
-        str_to_int(oxy_rating) * str_to_int(co2_rating)
+    str_to_int(oxy_rating) * str_to_int(co2_rating)
 }
 
 fn find_line_by_bit_criteria<'a>(
