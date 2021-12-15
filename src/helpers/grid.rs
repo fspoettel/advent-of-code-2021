@@ -4,8 +4,10 @@ use std::fmt::Debug;
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Point(pub usize, pub usize);
 
-pub fn point_id(point: Point, x_ceil: usize) -> usize {
-    point.0 + x_ceil * point.1
+impl Point {
+    pub fn to_id(&self, x_ceil: usize) -> usize {
+        self.0 + x_ceil * self.1
+    }
 }
 
 /// Get all neighbors for a point in a grid, respecting the boundaries of the input.
