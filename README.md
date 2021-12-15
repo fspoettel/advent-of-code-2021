@@ -28,9 +28,9 @@
 
 ---
 
-This repository has been generated with the [advent-of-code-rust](https://github.com/fspoettel/advent-of-code-rust) template.
+Generated with the [advent-of-code-rust](https://github.com/fspoettel/advent-of-code-rust) template.
 
-## Use this template
+## Create your own
 
  1. Open the [advent-of-code-rust](https://github.com/fspoettel/advent-of-code-rust) template on Github.
  2. Click `Use this template` and create your repository.
@@ -124,21 +124,21 @@ cargo clippy
 
 ## Setup readme stars
 
-This template includes [a Github action](https://github.com/k2bd/advent-readme-stars) that automatically updates with your advent of code progress.
+This template includes [a Github action](https://github.com/k2bd/advent-readme-stars) that automatically updates the readme with your advent of code progress.
 
 To enable it, you need to do two things:
 
  1. set repository secrets.
- 2. create a private leaderbord.
+ 2. create a private leaderboard.
 
 ### Repository secrets
 
 Go to the _Secrets_ tab in your repository settings and create the following secrets:
 
-* `AOC_USER_ID`: Go to [this page](https://adventofcode.com/settings) and copy your id. It's the number behind the `#` symbol in the first name option. Example: `3031`
+* `AOC_USER_ID`: Go to [this page](https://adventofcode.com/settings) and copy your user id. It's the number behind the `#` symbol in the first name option. Example: `3031`
 * `AOC_YEAR`: the year you want to track. Example: `2021`
 * `AOC_SESSION`: an active session for the advent of code website. To get this, press F12 anywhere on the Advent of Code website to open your browser developer tools. Look in your Cookies under the Application or Storage tab, and copy out the `session` cookie.
 
 ### Private Leaderboard
 
-Go to the leaderboard page of the year you want to track and click _Private Leaderboard_. If you have not created a leaderboard, create one by clicking _Create It_. Your leaderboard should be accessible under `https://adventofcode.com/{year}/leaderboard/private/view/{aoc_user_id}`.
+Go to the leaderboard page of the year you want to track and click _Private Leaderboard_. If you have not created a leaderboard yet, create one by clicking _Create It_. Your leaderboard should be accessible under `https://adventofcode.com/{year}/leaderboard/private/view/{aoc_user_id}`.
