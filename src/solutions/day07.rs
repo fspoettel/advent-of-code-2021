@@ -1,6 +1,6 @@
 use crate::helpers::math::{median, nth_triangular};
 
-fn parse_input(input: &str) -> Vec<i32> {
+fn parse_input(input: &str) -> Vec<u64> {
     input
         .lines()
         .next()
@@ -10,13 +10,16 @@ fn parse_input(input: &str) -> Vec<i32> {
         .collect()
 }
 
-pub fn part_one(input: &str) -> i32 {
+pub fn part_one(input: &str) -> u64 {
     let mut positions = parse_input(input);
     let median = median(&mut positions);
-    positions.iter().map(|x| (x - median).abs()).sum()
+    positions
+        .iter()
+        .map(|x| (*x as i32 - median as i32).abs() as u64)
+        .sum()
 }
 
-pub fn part_two(input: &str) -> i32 {
+pub fn part_two(input: &str) -> u64 {
     let mut positions = parse_input(input);
     positions.sort_unstable();
 
@@ -24,7 +27,7 @@ pub fn part_two(input: &str) -> i32 {
         .map(|i| {
             positions
                 .iter()
-                .map(|p| nth_triangular((p - i).abs()))
+                .map(|p| nth_triangular((*p as i32 - i as i32).abs() as u64))
                 .sum()
         })
         .min()
