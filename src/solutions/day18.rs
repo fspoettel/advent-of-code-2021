@@ -1,216 +1,167 @@
 use itertools::Itertools;
-use serde_json::Value;
 use std::cmp::max;
 
-// here be dragons.
-
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 enum Symbol {
-    LeftBracket,
-    RightBracket,
+    Open,
+    Close,
     Comma,
-    Number(u32),
+    Num(u32),
 }
 
 impl Symbol {
     fn from_char(c: char) -> Self {
         match c {
-            '[' => Symbol::LeftBracket,
-            ']' => Symbol::RightBracket,
+            '[' => Symbol::Open,
+            ']' => Symbol::Close,
             ',' => Symbol::Comma,
-            c => Symbol::Number(c.to_digit(10).unwrap()),
-        }
-    }
-
-    fn to_char(self) -> char {
-        match self {
-            Symbol::LeftBracket => '[',
-            Symbol::RightBracket => ']',
-            Symbol::Comma => ',',
-            Symbol::Number(v) => char::from_digit(v, 10).unwrap(),
+            c => Symbol::Num(c.to_digit(10).unwrap()),
         }
     }
 }
 
 type Snail = Vec<Symbol>;
 
-trait SnailMethods {
-    fn add(a: &Self, b: &Self) -> Self;
-    fn explode(&mut self) -> bool;
-    fn from_str(s: &str) -> Snail;
-    fn reduce(&mut self);
-    fn split(&mut self) -> bool;
-    fn to_json(&self) -> Value;
+fn add(a: &[Symbol], b: &[Symbol]) -> Snail {
+    let mut snail: Snail = vec![Symbol::Open];
+    snail.extend(a.iter().cloned());
+    snail.push(Symbol::Comma);
+    snail.extend(b.iter().cloned());
+    snail.push(Symbol::Close);
+    reduce(&mut snail);
+    snail
 }
 
-impl SnailMethods for Snail {
-    fn from_str(s: &str) -> Snail {
-        s.chars().map(Symbol::from_char).collect()
-    }
+fn from_str(s: &str) -> Snail {
+    s.chars().map(Symbol::from_char).collect()
+}
 
-    // cast to a nested JSON array in order to do an easy, recursive magnitude calculation.
-    // there certainly is a more efficient solution :P
-    fn to_json(&self) -> Value {
-        let s: String = self.iter().map(|x| Symbol::to_char(*x)).collect();
-        serde_json::from_str(&s).unwrap()
-    }
+fn reduce(snail: &mut Snail) {
+    while explode(snail) || split(snail) {}
+}
 
-    fn add(a: &Snail, b: &Snail) -> Self {
-        let mut snail: Self = vec![Symbol::LeftBracket];
-        snail.extend(a.iter().copied());
-        snail.push(Symbol::Comma);
-        snail.extend(b.iter().copied());
-        snail.push(Symbol::RightBracket);
-        snail.reduce();
-        snail
-    }
+fn split(snail: &mut Snail) -> bool {
+    let pos = snail.iter().position(|s| match s {
+        Symbol::Num(x) => *x > 9,
+        _ => false,
+    });
 
-    fn reduce(&mut self) {
-        loop {
-            if self.explode() || self.split() {
-                continue;
+    match pos {
+        None => false,
+        Some(index) => {
+            if let Symbol::Num(x) = snail[index] {
+                let l = x / 2;
+                let r = x - l;
+                snail.splice(
+                    index..index + 1,
+                    [
+                        Symbol::Open,
+                        Symbol::Num(l),
+                        Symbol::Comma,
+                        Symbol::Num(r),
+                        Symbol::Close,
+                    ],
+                );
+                true
             } else {
-                break;
+                unreachable!()
             }
         }
     }
+}
 
-    fn split(&mut self) -> bool {
-        let pos = self.iter().position(|s| {
-            if let Symbol::Number(x) = s {
-                *x > 9
-            } else {
-                false
+fn explode(snail: &mut Snail) -> bool {
+    let mut depth = 0;
+
+    let pos = snail.iter().position(|s| {
+        match s {
+            Symbol::Open => {
+                depth += 1;
             }
-        });
-
-        match pos {
-            Some(index) => {
-                if let Symbol::Number(x) = self[index] {
-                    let l = x / 2;
-                    let r = x - l;
-                    self.splice(
-                        index..index + 1,
-                        [
-                            Symbol::LeftBracket,
-                            Symbol::Number(l),
-                            Symbol::Comma,
-                            Symbol::Number(r),
-                            Symbol::RightBracket,
-                        ],
-                    );
-                    true
-                } else {
-                    unreachable!()
-                }
+            Symbol::Close => {
+                depth -= 1;
             }
-            None => false,
-        }
-    }
+            _ => (),
+        };
 
-    fn explode(&mut self) -> bool {
-        let mut depth = 0;
+        depth == 5
+    });
 
-        let pos = self.iter().position(|s| {
-            match s {
-                Symbol::LeftBracket => {
-                    depth += 1;
-                }
-                Symbol::RightBracket => {
-                    depth -= 1;
-                }
-                _ => (),
+    match pos {
+        None => false,
+        Some(index) => {
+            let l = match snail[index + 1] {
+                Symbol::Num(x) => x,
+                _ => unreachable!(),
             };
 
-            depth == 5
-        });
+            let r = match snail[index + 3] {
+                Symbol::Num(x) => x,
+                _ => unreachable!(),
+            };
 
-        match pos {
-            None => false,
-            Some(index) => {
-                let mut i = index;
-                let mut j = index + 5;
-
-                let l = if let Symbol::Number(x) = self[index + 1] {
-                    x
+            snail[..index].iter_mut().rev().find_map(|x| {
+                if let Symbol::Num(x) = x {
+                    *x += l;
+                    Some(())
                 } else {
-                    unreachable!()
-                };
+                    None
+                }
+            });
 
-                let r = if let Symbol::Number(x) = self[index + 3] {
-                    x
+            snail[index + 4..].iter_mut().find_map(|x| {
+                if let Symbol::Num(x) = x {
+                    *x += r;
+                    Some(())
                 } else {
-                    unreachable!()
-                };
-
-                while i > 0 {
-                    if let Symbol::Number(x) = self[i] {
-                        self.splice(i..i + 1, [Symbol::Number(x + l)]);
-                        break;
-                    } else {
-                        i -= 1;
-                    }
+                    None
                 }
+            });
 
-                while j < self.len() {
-                    if let Symbol::Number(x) = self[j] {
-                        self.splice(j..j + 1, [Symbol::Number(x + r)]);
-                        break;
-                    } else {
-                        j += 1;
-                    }
-                }
-
-                self.splice(index..index + 5, [Symbol::Number(0)]);
-                true
-            }
+            snail.splice(index..index + 5, [Symbol::Num(0)]);
+            true
         }
     }
 }
 
 fn parse(input: &str) -> Vec<Snail> {
-    input.lines().map(Snail::from_str).collect()
+    input.lines().map(from_str).collect()
 }
 
-fn calc_magnitude(arr: &[Value]) -> u64 {
-    fn calc(val: &Value, modifier: u64) -> u64 {
-        modifier
-            * match val {
-                Value::Array(a) => Some(calc_magnitude(a)),
-                Value::Number(x) => Some(x.as_u64().unwrap()),
-                _ => None,
-            }
-            .unwrap()
+// this previously used a recursive function based on casting to json.
+// found this on a random reddit thread and it is both faster and more elegant.
+fn calc_magnitude(snail: &[Symbol]) -> u32 {
+    let mut multiplier = 1;
+    let mut output = 0;
+
+    for symbol in snail {
+        match symbol {
+            Symbol::Close => multiplier /= 2,
+            Symbol::Comma => multiplier = (multiplier / 3) * 2,
+            Symbol::Num(x) => output += *x * multiplier,
+            Symbol::Open => multiplier *= 3,
+        }
     }
 
-    calc(&arr[0], 3) + calc(&arr[1], 2)
+    output
 }
 
-pub fn part_one(input: &str) -> u64 {
-    let snail_as_json = parse(input)
-        .into_iter()
-        .fold1(|acc, curr| Snail::add(&acc, &curr))
-        .unwrap()
-        .to_json();
-
-    match snail_as_json {
-        Value::Array(x) => calc_magnitude(&x),
-        _ => unreachable!(),
-    }
+pub fn part_one(input: &str) -> u32 {
+    calc_magnitude(
+        &parse(input)
+            .into_iter()
+            .fold1(|acc, curr| add(&acc, &curr))
+            .unwrap(),
+    )
 }
 
-pub fn part_two(input: &str) -> u64 {
+pub fn part_two(input: &str) -> u32 {
     parse(input).iter().combinations(2).fold(0, |acc, snails| {
-        let magnitude = |a: &Snail, b: &Snail| match Snail::add(a, b).to_json() {
-            Value::Array(x) => calc_magnitude(&x),
-            _ => unreachable!(),
-        };
-
         max(
             acc,
             max(
-                magnitude(snails[1], snails[0]),
-                magnitude(snails[0], snails[1]),
+                calc_magnitude(&add(snails[0], snails[1])),
+                calc_magnitude(&add(snails[1], snails[0])),
             ),
         )
     })
