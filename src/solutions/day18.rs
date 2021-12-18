@@ -22,12 +22,12 @@ impl Symbol {
         }
     }
 
-    fn to_char(&self) -> char {
+    fn to_char(self) -> char {
         match self {
             Symbol::LeftBracket => '[',
             Symbol::RightBracket => ']',
             Symbol::Comma => ',',
-            Symbol::Number(v) => char::from_digit(*v, 10).unwrap(),
+            Symbol::Number(v) => char::from_digit(v, 10).unwrap(),
         }
     }
 }
@@ -51,15 +51,15 @@ impl SnailMethods for Snail {
     // cast to a nested JSON array in order to do an easy, recursive magnitude calculation.
     // there certainly is a more efficient solution :P
     fn to_json(&self) -> Value {
-        let s: String = self.iter().map(Symbol::to_char).collect();
+        let s: String = self.iter().map(|x| Symbol::to_char(*x)).collect();
         serde_json::from_str(&s).unwrap()
     }
 
     fn add(a: &Snail, b: &Snail) -> Self {
         let mut snail: Self = vec![Symbol::LeftBracket];
-        snail.extend(a.iter().map(|x| *x));
+        snail.extend(a.iter().copied());
         snail.push(Symbol::Comma);
-        snail.extend(b.iter().map(|x| *x));
+        snail.extend(b.iter().copied());
         snail.push(Symbol::RightBracket);
         snail.reduce();
         snail
@@ -172,15 +172,15 @@ fn parse(input: &str) -> Vec<Snail> {
     input.lines().map(Snail::from_str).collect()
 }
 
-fn calc_magnitude(arr: &Vec<Value>) -> u64 {
+fn calc_magnitude(arr: &[Value]) -> u64 {
     fn calc(val: &Value, modifier: u64) -> u64 {
-        match val {
-            Value::Array(a) => Some(calc_magnitude(a)),
-            Value::Number(x) => Some(x.as_u64().unwrap()),
-            _ => None,
-        }
-        .unwrap()
-            * modifier
+        modifier
+            * match val {
+                Value::Array(a) => Some(calc_magnitude(a)),
+                Value::Number(x) => Some(x.as_u64().unwrap()),
+                _ => None,
+            }
+            .unwrap()
     }
 
     calc(&arr[0], 3) + calc(&arr[1], 2)
@@ -200,23 +200,20 @@ pub fn part_one(input: &str) -> u64 {
 }
 
 pub fn part_two(input: &str) -> u64 {
-    let mut max_magnitude = 0;
-
-    parse(input).iter().combinations(2).for_each(|snails| {
-        let mut magnitude = |a: &Snail, b: &Snail| {
-            match Snail::add(a, b).to_json() {
-                Value::Array(x) => {
-                    max_magnitude = max(calc_magnitude(&x), max_magnitude);
-                }
-                _ => unreachable!(),
-            };
+    parse(input).iter().combinations(2).fold(0, |acc, snails| {
+        let magnitude = |a: &Snail, b: &Snail| match Snail::add(a, b).to_json() {
+            Value::Array(x) => calc_magnitude(&x),
+            _ => unreachable!(),
         };
 
-        magnitude(snails[1], snails[0]);
-        magnitude(snails[0], snails[1]);
-    });
-
-    max_magnitude
+        max(
+            acc,
+            max(
+                magnitude(snails[1], snails[0]),
+                magnitude(snails[0], snails[1]),
+            ),
+        )
+    })
 }
 
 #[cfg(test)]
