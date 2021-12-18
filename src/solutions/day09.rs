@@ -7,7 +7,7 @@ struct Point {
     val: u32,
 }
 
-fn parse_input(input: &str) -> Matrix {
+fn parse(input: &str) -> Matrix {
     input
         .lines()
         .map(|l| {
@@ -76,7 +76,7 @@ fn get_minimums(matrix: &[Vec<u32>]) -> Vec<Point> {
 }
 
 pub fn part_one(input: &str) -> u32 {
-    let matrix = parse_input(input);
+    let matrix = parse(input);
     get_minimums(&matrix).iter().map(|p| p.val + 1).sum()
 }
 
@@ -94,7 +94,7 @@ fn flood_fill<'a>(matrix: &'a [Vec<u32>], p: &'a Point, basin: &'a mut Vec<Point
 }
 
 pub fn part_two(input: &str) -> usize {
-    let matrix = parse_input(input);
+    let matrix = parse(input);
 
     let mut basins = get_minimums(&matrix)
         .iter()

@@ -88,7 +88,7 @@ use self::shortest_path::shortest_path;
 type Row = Vec<u32>;
 type Grid = Vec<Row>;
 
-fn parse_input(input: &str) -> Grid {
+fn parse(input: &str) -> Grid {
     input
         .lines()
         .map(|l| l.chars().map(|c| c.to_digit(10).unwrap()).collect())
@@ -96,11 +96,11 @@ fn parse_input(input: &str) -> Grid {
 }
 
 pub fn part_one(input: &str) -> u32 {
-    shortest_path(&parse_input(input)).unwrap() as u32
+    shortest_path(&parse(input)).unwrap() as u32
 }
 
 pub fn part_two(input: &str) -> u32 {
-    let grid = parse_input(input);
+    let grid = parse(input);
 
     let height = grid.len();
     let width = grid[0].len();

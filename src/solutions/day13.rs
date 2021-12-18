@@ -14,7 +14,7 @@ enum Instruction {
 }
 type Instructions = Vec<Instruction>;
 
-fn parse_input(input: &str) -> (Grid, Instructions) {
+fn parse(input: &str) -> (Grid, Instructions) {
     let mut points: Points = Vec::new();
     let mut instructions: Instructions = Vec::new();
 
@@ -117,7 +117,7 @@ fn count_grid(grid: &[Line]) -> u32 {
 }
 
 pub fn part_one(input: &str) -> u32 {
-    let (grid, instructions) = parse_input(input);
+    let (grid, instructions) = parse(input);
     count_grid(&fold(&grid, &instructions[0]))
 }
 
@@ -129,7 +129,7 @@ fn print_grid(grid: &[Line]) {
 }
 
 pub fn part_two(input: &str) -> u32 {
-    let (grid, instructions) = parse_input(input);
+    let (grid, instructions) = parse(input);
 
     let code = instructions.iter().fold(grid, |acc, curr| fold(&acc, curr));
 

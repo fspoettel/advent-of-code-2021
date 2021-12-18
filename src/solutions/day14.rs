@@ -68,7 +68,7 @@ impl Polymer {
     }
 }
 
-fn parse_input(input: &str) -> (Polymer, Rules) {
+fn parse(input: &str) -> (Polymer, Rules) {
     let mut lines = input.lines();
 
     let polymer = Polymer::from_string(lines.next().unwrap());
@@ -87,12 +87,12 @@ fn parse_input(input: &str) -> (Polymer, Rules) {
 }
 
 pub fn part_one(input: &str) -> u64 {
-    let (mut polymer, rules) = parse_input(input);
+    let (mut polymer, rules) = parse(input);
     polymer.expand_times(10, &rules).delta()
 }
 
 pub fn part_two(input: &str) -> u64 {
-    let (mut polymer, rules) = parse_input(input);
+    let (mut polymer, rules) = parse(input);
     polymer.expand_times(40, &rules).delta()
 }
 

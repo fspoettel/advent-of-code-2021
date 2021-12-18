@@ -7,7 +7,7 @@ static OCTOPUS_COLS: usize = 10;
 type Grid = [Line; 10];
 type Line = [u32; 10];
 
-fn parse_input(input: &str) -> Grid {
+fn parse(input: &str) -> Grid {
     input
         .lines()
         .map(|l| {
@@ -71,7 +71,7 @@ fn all_points() -> Vec<Point> {
 }
 
 pub fn part_one(input: &str) -> u32 {
-    let mut grid = parse_input(input);
+    let mut grid = parse(input);
     // optimization: keep a reference of all points in the grid to avoid recomputing this constantly.
     let points = all_points();
 
@@ -84,7 +84,7 @@ pub fn part_one(input: &str) -> u32 {
 }
 
 pub fn part_two(input: &str) -> usize {
-    let mut grid = parse_input(input);
+    let mut grid = parse(input);
     // optimization: keep a reference of all points in the grid to avoid recomputing this constantly.
     let points = all_points();
 

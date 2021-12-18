@@ -25,7 +25,7 @@ impl Graph<'_> {
     }
 }
 
-fn parse_input(input: &str) -> Graph {
+fn parse(input: &str) -> Graph {
     let mut graph = Graph::new();
 
     input.lines().for_each(|l| {
@@ -78,13 +78,13 @@ fn search(graph: &Graph, seen: &HashSet<&str>, id: &str, small_room_counter: u8)
 }
 
 pub fn part_one(input: &str) -> u32 {
-    let graph = parse_input(input);
+    let graph = parse(input);
     let seen: HashSet<&str> = HashSet::new();
     search(&graph, &seen, START, 0)
 }
 
 pub fn part_two(input: &str) -> u32 {
-    let graph = parse_input(input);
+    let graph = parse(input);
     let seen: HashSet<&str> = HashSet::new();
     search(&graph, &seen, START, 1)
 }

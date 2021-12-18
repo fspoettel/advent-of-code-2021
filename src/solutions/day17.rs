@@ -16,7 +16,7 @@ impl Bounds {
     }
 }
 
-fn parse_input(line: &str) -> Bounds {
+fn parse(line: &str) -> Bounds {
     let values: Vec<isize> = line
         .split(',')
         .flat_map(|part| {
@@ -76,12 +76,12 @@ fn find_hits(bounds: &Bounds) -> Vec<isize> {
 }
 
 pub fn part_one(input: &str) -> isize {
-    let bounds = parse_input(input.lines().next().unwrap());
+    let bounds = parse(input.lines().next().unwrap());
     *find_hits(&bounds).iter().max().unwrap()
 }
 
 pub fn part_two(input: &str) -> usize {
-    let bounds = parse_input(input.lines().next().unwrap());
+    let bounds = parse(input.lines().next().unwrap());
     find_hits(&bounds).len()
 }
 
