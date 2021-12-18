@@ -64,18 +64,18 @@ mod decoder {
 
     fn decode_operator(bits: &[u8]) -> Packet {
         let mode = bits[6];
-        let data_offset = 7 + if mode == 0 { 15 } else { 11 };
-        let len = to_u64(&bits[7..data_offset]) as usize;
+        let content_offset = 7 + if mode == 0 { 15 } else { 11 };
+        let len = to_u64(&bits[7..content_offset]) as usize;
 
         let mut children = Vec::new();
         let mut index = 0;
 
         while (mode == 0 && index < len) || (mode == 1 && children.len() < len) {
-            let packet = decode_packet(&bits[(data_offset + index)..]);
+            let packet = decode_packet(&bits[(content_offset + index)..]);
 
             match &packet {
-                Packet::Literal(p) => index += p.size,
-                Packet::Operator(p) => index += p.size,
+                Packet::Literal(data) => index += data.size,
+                Packet::Operator(data) => index += data.size,
             }
 
             children.push(packet);
@@ -84,7 +84,7 @@ mod decoder {
         Packet::Operator(Operator {
             header: decode_header(bits),
             children,
-            size: data_offset + index,
+            size: content_offset + index,
         })
     }
 
@@ -132,17 +132,19 @@ mod interpreter {
     pub fn interpret(packet: Packet) -> u64 {
         match packet {
             Packet::Literal(_) => panic!("unexpected literal on root level."),
-            Packet::Operator(operator) => {
-                let values: Vec<u64> = operator
+            Packet::Operator(data) => {
+                let values: Vec<u64> = data
                     .children
                     .iter()
-                    .map(|curr| match curr {
-                        Packet::Literal(l) => l.value as u64,
-                        Packet::Operator(o) => interpret(Packet::Operator(o.clone())),
+                    .map(|child| match child {
+                        Packet::Literal(child_data) => child_data.value as u64,
+                        Packet::Operator(child_data) => {
+                            interpret(Packet::Operator(child_data.clone()))
+                        }
                     })
                     .collect();
 
-                match operator.header.type_id {
+                match data.header.type_id {
                     0 => values.iter().sum(),
                     1 => values.iter().product(),
                     2 => *values.iter().min().unwrap(),
@@ -159,12 +161,14 @@ mod interpreter {
     pub fn sum_versions(packet: Packet) -> u64 {
         match packet {
             Packet::Literal(_) => panic!("unexpected literal on root level."),
-            Packet::Operator(p) => {
-                p.children
+            Packet::Operator(data) => {
+                data.children
                     .iter()
-                    .fold(p.header.version, |acc, curr| match curr {
-                        Packet::Literal(l) => acc + l.header.version,
-                        Packet::Operator(o) => acc + sum_versions(Packet::Operator(o.clone())),
+                    .fold(data.header.version, |acc, curr| match curr {
+                        Packet::Literal(child_data) => acc + child_data.header.version,
+                        Packet::Operator(child_data) => {
+                            acc + sum_versions(Packet::Operator(child_data.clone()))
+                        }
                     })
             }
         }
