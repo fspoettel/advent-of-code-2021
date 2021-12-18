@@ -2,6 +2,8 @@ use itertools::Itertools;
 use serde_json::Value;
 use std::cmp::max;
 
+// here be dragons.
+
 #[derive(Clone, Copy, Debug)]
 enum Symbol {
     LeftBracket,
