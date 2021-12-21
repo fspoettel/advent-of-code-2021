@@ -28,6 +28,7 @@
 | [Day 17](https://adventofcode.com/2021/day/17) | ⭐ | ⭐ |
 | [Day 18](https://adventofcode.com/2021/day/18) | ⭐ | ⭐ |
 | [Day 20](https://adventofcode.com/2021/day/20) | ⭐ | ⭐ |
+| [Day 21](https://adventofcode.com/2021/day/21) | ⭐ |   |
 <!--- advent_readme_stars table --->
 
 ---
