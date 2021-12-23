@@ -38,19 +38,17 @@ pub fn part_one(input: &str) -> u64 {
 }
 
 // possible rolls for a 3-sided die.
-static ROLLS: [(u64, u64); 7] = [
-    (3, 1),
-    (4, 3),
-    (5, 6),
-    (6, 7),
-    (7, 6),
-    (8, 3),
-    (9, 1)
-];
+static ROLLS: [(u64, u64); 7] = [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)];
 
 type Cache = HashMap<(u64, u64, u64, u64), (u64, u64)>;
 
-fn play(p1_position: u64, p2_position: u64, p1_score: u64, p2_score: u64, cache: &mut Cache) -> (u64, u64) {
+fn play(
+    p1_position: u64,
+    p2_position: u64,
+    p1_score: u64,
+    p2_score: u64,
+    cache: &mut Cache,
+) -> (u64, u64) {
     let cache_key = (p1_position, p2_position, p1_score, p2_score);
 
     // if there is a cached resolution for this game state, return it.
@@ -66,13 +64,11 @@ fn play(p1_position: u64, p2_position: u64, p1_score: u64, p2_score: u64, cache:
     if p2_score >= 21 {
         (0, 1)
     } else {
-        let res = ROLLS
-            .iter()
-            .fold((0, 0), |acc, (roll, n)| {
-                let position = ((p1_position + roll - 1) % 10) + 1;
-                let wins = play(p2_position, position, p2_score, p1_score + position, cache);
-                (acc.0 + n * wins.1, acc.1 + n * wins.0)
-            });
+        let res = ROLLS.iter().fold((0, 0), |acc, (roll, n)| {
+            let position = ((p1_position + roll - 1) % 10) + 1;
+            let wins = play(p2_position, position, p2_score, p1_score + position, cache);
+            (acc.0 + n * wins.1, acc.1 + n * wins.0)
+        });
 
         cache.insert(cache_key, res);
 
