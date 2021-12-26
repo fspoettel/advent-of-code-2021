@@ -16,13 +16,13 @@ fn parse(input: &str) -> Vec<Line> {
             } else {
                 Some(
                     l.chars()
-                    .map(|c| match c {
-                        '>' => Occupant::EastBound,
-                        'v' => Occupant::SouthBound,
-                        '.' => Occupant::Empty,
-                        c => panic!("unexpected input: {}", c),
-                    })
-                    .collect()
+                        .map(|c| match c {
+                            '>' => Occupant::EastBound,
+                            'v' => Occupant::SouthBound,
+                            '.' => Occupant::Empty,
+                            c => panic!("unexpected input: {}", c),
+                        })
+                        .collect(),
                 )
             }
         })
