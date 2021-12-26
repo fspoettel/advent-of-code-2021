@@ -28,8 +28,10 @@ fn solve() -> Vec<i64> {
 
     for w in 1..=9 {
         let (a, b, c) = steps[step];
-        let z = calculate_step(w, 0, a, b, c);
-        z_values.entry(z).or_default().push(w);
+        z_values
+            .entry(calculate_step(w, 0, a, b, c))
+            .or_default()
+            .push(w);
     }
 
     step += 1;
@@ -37,13 +39,14 @@ fn solve() -> Vec<i64> {
     while step < 14 {
         let values: Vec<(i64, Vec<i64>)> = z_values.drain().collect();
 
-        values.into_iter().for_each(|(z, nums)| {
+        values.iter().for_each(|(z, nums)| {
             let (a, b, c) = steps[step];
 
             for w in 1..=9 {
-                let next_z = calculate_step(w, z, a, b, c);
-
-                if (a == 1 || next_z < z) && next_z < 1000000 {
+                let next_z = calculate_step(w, *z, a, b, c);
+                // optimization: remove z values above threshold.
+                // optimization: remove z values that do not shrink when divided / 26.
+                if (a == 1 || next_z < *z) && next_z < 1000000 {
                     let c = w.to_string().chars().next().unwrap();
                     let entry = z_values.entry(next_z).or_default();
 
