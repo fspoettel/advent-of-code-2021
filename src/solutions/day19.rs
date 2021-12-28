@@ -1,135 +1,198 @@
 use itertools::Itertools;
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::HashSet,
+    ops::{Add, Sub},
+};
 
-type Point = (i32, i32, i32);
+#[derive(Clone, Copy,  Eq, Hash, PartialEq)]
+struct Point(i32, i32, i32);
+
+impl Add for Point {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Self(self.0 + other.0, self.1 + other.1, self.2 + other.2)
+    }
+}
+
+impl Sub for Point {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self {
+        Self(self.0 - other.0, self.1 - other.1, self.2 - other.2)
+    }
+}
+
+impl Point {
+    fn distance(&self, other: &Point) -> i32 {
+        (other.0 - self.0).pow(2) + (other.1 - self.1).pow(2) + (other.2 - self.2).pow(2)
+    }
+
+    fn manhattan_distance(&self, other: &Point) -> i32 {
+        (self.0 - other.0).abs() + (self.1 - other.1).abs() + (self.2 - other.2).abs()
+    }
+
+    fn rotate(&self, rot: u8) -> Self {
+        let &Point(x, y, z) = self;
+
+        match rot {
+            // http://www.euclideanspace.com/maths/algebra/matrix/transforms/examples/index.htm
+            0 => Point(x, y, z),
+            1 => Point(x, z, -y),
+            2 => Point(x, -y, -z),
+            3 => Point(x, -z, y),
+            4 => Point(y, x, -z),
+            5 => Point(y, z, x),
+            6 => Point(y, -x, z),
+            7 => Point(y, -z, -x),
+            8 => Point(z, x, y),
+            9 => Point(z, y, -x),
+            10 => Point(z, -x, -y),
+            11 => Point(z, -y, x),
+            12 => Point(-x, y, -z),
+            13 => Point(-x, z, y),
+            14 => Point(-x, -y, z),
+            15 => Point(-x, -z, -y),
+            16 => Point(-y, x, z),
+            17 => Point(-y, z, -x),
+            18 => Point(-y, -x, -z),
+            19 => Point(-y, -z, x),
+            20 => Point(-z, x, -y),
+            21 => Point(-z, y, x),
+            22 => Point(-z, -x, y),
+            23 => Point(-z, -y, -x),
+            v => panic!("unexpected rotation {}", v),
+        }
+    }
+}
+
+type Neighbors = (usize, usize);
 
 type Report = Vec<Point>;
-type Reports = HashMap<u32, Report>;
+type Reports = Vec<Report>;
+
+type Distances = HashSet<i32>;
 
 fn parse(input: &str) -> Reports {
-    let mut reports: Reports = HashMap::new();
-    let mut current_report: i32 = -1;
-
-    input.lines().for_each(|l| {
+    input.lines().fold(Vec::new(), |mut acc, l| {
         if l.starts_with("---") {
-            current_report += 1;
+            acc.push(vec![]);
         } else if !l.is_empty() {
             let mut coords = l.split(',').map(|s| s.parse::<i32>().unwrap());
-            reports
-                .entry(current_report.try_into().unwrap())
-                .or_default()
-                .push((
-                    coords.next().unwrap(),
-                    coords.next().unwrap(),
-                    coords.next().unwrap(),
-                ));
+            let last = acc.len() - 1;
+
+            acc[last].push(Point(
+                coords.next().unwrap(),
+                coords.next().unwrap(),
+                coords.next().unwrap(),
+            ));
         }
-    });
 
-    reports
-}
-
-static ROTATION_MATRICES: [[[i8; 3]; 3]; 24] = [
-    [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-    [[1, 0, 0], [0, 0, -1], [0, 1, 0]],
-    [[1, 0, 0], [0, -1, 0], [0, 0, -1]],
-    [[1, 0, 0], [0, 0, 1], [0, -1, 0]],
-    [[0, -1, 0], [1, 0, 0], [0, 0, 1]],
-    [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
-    [[0, 1, 0], [1, 0, 0], [0, 0, -1]],
-    [[0, 0, -1], [1, 0, 0], [0, -1, 0]],
-    [[-1, 0, 0], [0, -1, 0], [0, 0, 1]],
-    [[-1, 0, 0], [0, 0, -1], [0, -1, 0]],
-    [[-1, 0, 0], [0, 1, 0], [0, 0, -1]],
-    [[-1, 0, 0], [0, 0, 1], [0, 1, 0]],
-    [[0, 1, 0], [-1, 0, 0], [0, 0, 1]],
-    [[0, 0, 1], [-1, 0, 0], [0, -1, 0]],
-    [[0, -1, 0], [-1, 0, 0], [0, 0, -1]],
-    [[0, 0, -1], [-1, 0, 0], [0, 1, 0]],
-    [[0, 0, -1], [0, 1, 0], [1, 0, 0]],
-    [[0, 1, 0], [0, 0, 1], [1, 0, 0]],
-    [[0, 0, 1], [0, -1, 0], [1, 0, 0]],
-    [[0, -1, 0], [0, 0, -1], [1, 0, 0]],
-    [[0, 0, -1], [0, -1, 0], [-1, 0, 0]],
-    [[0, -1, 0], [0, 0, 1], [-1, 0, 0]],
-    [[0, 0, 1], [0, 1, 0], [-1, 0, 0]],
-    [[0, 1, 0], [0, 0, -1], [-1, 0, 0]],
-];
-
-type Distances = HashMap<i32, (Point, Point)>;
-type DistanceMap = HashMap<u32, Distances>;
-
-fn to_distances(report: &Report) -> Distances {
-    report
-        .iter()
-        .tuple_combinations()
-        .fold(HashMap::new(), |mut acc, (p1, p2)| {
-            let distance = (((p2.0 - p1.0).pow(2) + (p2.1 - p1.1).pow(2) + (p2.2 - p1.2).pow(2))
-                as f64)
-                .sqrt() as i32;
-            acc.insert(distance.abs(), (*p1, *p2));
-            acc
-        })
-}
-
-fn to_distance_cache(reports: &Reports) -> DistanceMap {
-    reports.iter().fold(HashMap::new(), |mut acc, curr| {
-        acc.insert(*curr.0, to_distances(curr.1));
         acc
     })
 }
 
-fn match_reports(reports: &Reports, distance_cache: &DistanceMap) -> Vec<(u32, u32)> {
-    let mut matching_reports: Vec<(u32, u32)> = Vec::new();
-    let mut seen_reports: Vec<u32> = vec![0];
-
-    while matching_reports.len() != reports.len() - 1 {
-        let current_report = seen_reports.iter().last().unwrap();
-
-        let distances: Vec<i32> = distance_cache
-            .get(&current_report)
-            .unwrap()
-            .keys()
-            .map(|k| *k)
-            .collect();
-
-        let matching_report = reports
-            .keys()
-            .find(|other_id| {
-                !seen_reports.contains(*other_id)
-                    && distance_cache
-                        .get(*other_id)
-                        .unwrap()
-                        .keys()
-                        .filter(|distance| distances.contains(*distance))
-                        .count()
-                        >= 66
-            })
-            .unwrap();
-
-        matching_reports.push((*current_report, *matching_report));
-        seen_reports.push(*matching_report);
-    }
-
-    matching_reports
+fn distances(reports: &[Report]) -> Vec<Distances> {
+    reports
+        .iter()
+        .map(|r| {
+            r.iter()
+                .tuple_combinations()
+                .map(|(p1, p2)| p1.distance(p2))
+                .collect()
+        })
+        .collect()
 }
 
-pub fn part_one(input: &str) -> u32 {
+fn find_neighbors(distances: &[Distances]) -> Vec<Neighbors> {
+    distances
+        .iter()
+        .enumerate()
+        .tuple_combinations()
+        .filter(|((_, d1), (_, d2))| d1.intersection(d2).count() >= 66)
+        .flat_map(|((i, _), (j, _))| [(i, j), (j, i)])
+        .collect()
+}
+
+
+fn unaligned_neighbors(neighbors: &Vec<Neighbors>, aligned: &Vec<Report>) -> Option<Neighbors> {
+    neighbors
+        .iter()
+        .find(|(a, b)| !aligned[*a].is_empty() && aligned[*b].is_empty())
+        .map(|(a, b)| (*a, *b))
+}
+
+fn find_pair_by_distance<'a>(reports: &'a [Point], distance: i32) -> (&'a Point, &'a Point) {
+    reports
+        .iter()
+        .tuple_combinations()
+        .find(|(a, b)| a.distance(b) == distance)
+        .unwrap()
+}
+
+fn align(reports: &[Report]) -> (Vec<Report>, Vec<Point>) {
+    let distances = distances(reports);
+    let neighbors = find_neighbors(&distances);
+
+    let mut alignments: Vec<Point> = vec![Point(0, 0, 0)];
+    let mut aligned: Vec<Report> = vec![vec![]; reports.len()];
+    aligned[0] = reports[0].clone();
+
+    while let Some((a, b)) = unaligned_neighbors(&neighbors, &aligned) {
+        let common_distance = distances[a].intersection(&distances[b]).next().unwrap();
+
+        let (c0, c1) = find_pair_by_distance(&aligned[a], *common_distance);
+        let (t0, t1) = find_pair_by_distance(&reports[b], *common_distance);
+
+        let mut alignment: Option<Point> = None;
+        let mut rot = 0;
+
+        while rot < 24 {
+            let r0 = t0.rotate(rot);
+            let r1 = t1.rotate(rot);
+
+            let saligned = r0 - *c0 == r1 - *c1;
+            let asaligned = r0 - *c1 == r1 - *c0;
+
+            if saligned || asaligned {
+                alignment = if saligned {
+                    Some(*c0 - r0)
+                } else {
+                    Some(*c1 - r0)
+                };
+                break;
+            } else {
+                rot += 1;
+            }
+        }
+
+        if let Some(alignment) = alignment {
+            alignments.push(alignment);
+            aligned[b] = reports[b]
+                .iter()
+                .map(|p| p.rotate(rot) + alignment)
+                .collect();
+        } else {
+            panic!("could not find a canonical orientation for all reports!");
+        }
+    }
+
+    (aligned, alignments)
+}
+
+pub fn part_one(input: &str) -> usize {
     let reports = parse(input);
-    let distance_cache = to_distance_cache(&reports);
-    let matching_reports = match_reports(&reports, &distance_cache);
-
-    let mut unique_points: Vec<Point> = Vec::new();
-
-    for (r1, r2) in matching_reports {
-        println!("{} <> {}", r1, r2);
-    }
-
-    79
+    align(&reports).0.iter().flatten().unique().count()
 }
 
-pub fn part_two(input: &str) -> u32 {
-    0
+pub fn part_two(input: &str) -> i32 {
+    let reports = parse(input);
+    let (_, alignments) = align(&reports);
+
+    alignments
+        .iter()
+        .tuple_combinations()
+        .map(|(a, b)| a.manhattan_distance(b))
+        .max()
+        .unwrap()
 }
 
 #[cfg(test)]
@@ -147,6 +210,6 @@ mod tests {
     fn test_part_two() {
         use aoc::read_file;
         let input = read_file("examples", 19);
-        assert_eq!(part_two(&input), 0);
+        assert_eq!(part_two(&input), 3621);
     }
 }
