@@ -75,7 +75,7 @@ fn cube_diffs(instructions: Vec<Cube>) -> Vec<Cube> {
         // 1. `off` instructions turn off intersecting parts of previous diffs.
         // 2. previously `off` diffs can be turned back on by `on` instructions.
         // 3. if both instructions were `on`, the new instruction cancel out old diffs to prevent duplicates.
-        to_add.extend(acc.iter().filter_map(|c| intersection(&curr, c, !c.on)));
+        to_add.extend(acc.iter().filter_map(|c| intersection(curr, c, !c.on)));
         acc.extend(to_add);
         acc
     })
