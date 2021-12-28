@@ -4,7 +4,7 @@ use std::{
     ops::{Add, Sub},
 };
 
-#[derive(Clone, Copy,  Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Eq, Hash, PartialEq)]
 struct Point(i32, i32, i32);
 
 impl Add for Point {
@@ -112,15 +112,14 @@ fn find_neighbors(distances: &[Distances]) -> Vec<Neighbors> {
         .collect()
 }
 
-
-fn unaligned_neighbors(neighbors: &Vec<Neighbors>, aligned: &Vec<Report>) -> Option<Neighbors> {
+fn unaligned_neighbors(neighbors: &[Neighbors], aligned: &[Report]) -> Option<Neighbors> {
     neighbors
         .iter()
         .find(|(a, b)| !aligned[*a].is_empty() && aligned[*b].is_empty())
         .map(|(a, b)| (*a, *b))
 }
 
-fn find_pair_by_distance<'a>(reports: &'a [Point], distance: i32) -> (&'a Point, &'a Point) {
+fn find_pair_by_distance(reports: &[Point], distance: i32) -> (&Point, &Point) {
     reports
         .iter()
         .tuple_combinations()
