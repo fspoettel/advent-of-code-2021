@@ -1,95 +1,117 @@
-use std::collections::HashSet;
+use std::cmp::{min, max};
 
-#[derive(Debug)]
-enum StepType {
-    On,
-    Off,
+struct Range { from: i64, to: i64 }
+
+struct Ranges {
+    x: Range,
+    y: Range,
+    z: Range,
 }
 
-type Dimension = (i32, i32);
-
-#[derive(Debug)]
-struct Range {
-    x: Dimension,
-    y: Dimension,
-    z: Dimension,
+struct Cube {
+    on: bool,
+    ranges: Ranges,
 }
 
-#[derive(Debug)]
-struct Step {
-    step_type: StepType,
-    range: Range,
-}
-
-type Point = (i32, i32, i32);
-
-fn parse_dimension(s: &str) -> Dimension {
+fn parse_range(s: &str) -> Range {
     let mut range = s.split('=').last().unwrap().split("..");
     let from = range.next().unwrap().parse().unwrap();
     let to = range.next().unwrap().parse().unwrap();
 
-    (from, to)
+    Range { from, to }
 }
 
-fn parse(input: &str) -> Vec<Step> {
+fn parse(input: &str) -> Vec<Cube> {
     input
         .lines()
         .map(|l| {
-            let step_type = if l.starts_with("on") {
-                StepType::On
-            } else {
-                StepType::Off
-            };
-
-            let mut ranges = l.split(' ').last().unwrap().split(',').map(parse_dimension);
+            let on = l.starts_with("on");
+            let mut ranges = l.split(' ').last().unwrap().split(',').map(parse_range);
 
             let x = ranges.next().unwrap();
             let y = ranges.next().unwrap();
             let z = ranges.next().unwrap();
-            let range = Range { x, y, z };
+            let ranges = Ranges { x, y, z };
 
-            Step { step_type, range }
+            Cube { on, ranges }
         })
         .collect()
 }
 
-pub fn part_one(input: &str) -> u64 {
-    let steps = parse(input);
-
-    fn some_in_bounds(range: (i32, i32)) -> bool {
-        (range.0 >= -50 && range.0 <= 50) || (range.1 >= -50 && range.1 <= 50)
+fn intersect(a: &Range, b: &Range) -> Option<Range> {
+    if b.from > a.to || a.from > b.to {
+        None
+    } else {
+        Some(Range {
+            from: max(a.from, b.from),
+            to: min(a.to, b.to)
+        })
     }
-
-    steps
-        .into_iter()
-        .filter(|step| {
-            some_in_bounds(step.range.x)
-                || some_in_bounds(step.range.y)
-                || some_in_bounds(step.range.z)
-        })
-        .fold(HashSet::new(), |mut acc: HashSet<Point>, step| {
-            let Step { step_type, range } = step;
-
-            for x in range.x.0..=range.x.1 {
-                for y in range.y.0..=range.y.1 {
-                    for z in range.z.0..=range.z.1 {
-                        let p = (x, y, z);
-                        match step_type {
-                            StepType::On => acc.insert(p),
-                            StepType::Off => acc.remove(&p),
-                        };
-                    }
-                }
-            }
-
-            acc
-        })
-        .len() as u64
 }
 
-pub fn part_two(input: &str) -> u64 {
-    // let steps = parse(input);
-    27585149362822350
+fn intersection(a: &Cube, b: &Cube, on: bool) -> Option<Cube> {
+    let x = intersect(&a.ranges.x, &b.ranges.x)?;
+    let y = intersect(&a.ranges.y, &b.ranges.y)?;
+    let z = intersect(&a.ranges.z, &b.ranges.z)?;
+
+    Some(Cube {
+        on,
+        ranges: Ranges { x, y, z }
+    })
+}
+
+fn cube_diffs(instructions: Vec<Cube>) -> Vec<Cube> {
+    let mut cubes: Vec<Cube> = Vec::new();
+
+    for inst in instructions {
+        let mut to_add: Vec<Cube> = Vec::new();
+
+        for cube in cubes.iter() {
+            let inter= intersection(&inst, cube, !cube.on);
+
+            if let Some(inter) = inter {
+                to_add.push(inter);
+            }
+        }
+
+        if inst.on {
+            to_add.push(inst);
+        }
+
+        cubes.extend(to_add);
+    }
+
+    cubes
+}
+
+fn volume(c: Cube) -> i64 {
+    let sign = if c.on { 1 } else { -1 };
+    sign * (c.ranges.x.to - c.ranges.x.from + 1) * (c.ranges.y.to - c.ranges.y.from + 1) * (c.ranges.z.to - c.ranges.z.from + 1)
+}
+
+pub fn part_one(input: &str) -> i64 {
+    let bounds = Cube {
+        on: true,
+        ranges: Ranges {
+            x: Range { from: -50, to: 50 },
+            y: Range { from: -50, to: 50 },
+            z: Range { from: -50, to: 50 }
+        }
+    };
+
+    cube_diffs(parse(input))
+        .into_iter()
+        .filter_map(|c| intersection(&c, &bounds, c.on))
+        .map(volume)
+        .sum()
+}
+
+
+pub fn part_two(input: &str) -> i64 {
+    cube_diffs(parse(input))
+        .into_iter()
+        .map(volume)
+        .sum()
 }
 
 #[cfg(test)]
@@ -107,6 +129,6 @@ mod tests {
     fn test_part_two() {
         use aoc::read_file;
         let input = read_file("examples", 22);
-        assert_eq!(part_two(&input), 27585149362822350);
+        assert_eq!(part_two(&input), 2758514936282235);
     }
 }
