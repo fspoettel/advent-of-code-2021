@@ -1,13 +1,19 @@
-use std::cmp::{min, max};
+use std::cmp::{max, min};
 
-struct Range { from: i64, to: i64 }
+#[derive(Clone)]
+struct Range {
+    from: i64,
+    to: i64,
+}
 
+#[derive(Clone)]
 struct Ranges {
     x: Range,
     y: Range,
     z: Range,
 }
 
+#[derive(Clone)]
 struct Cube {
     on: bool,
     ranges: Ranges,
@@ -44,7 +50,7 @@ fn intersect(a: &Range, b: &Range) -> Option<Range> {
     } else {
         Some(Range {
             from: max(a.from, b.from),
-            to: min(a.to, b.to)
+            to: min(a.to, b.to),
         })
     }
 }
@@ -56,37 +62,32 @@ fn intersection(a: &Cube, b: &Cube, on: bool) -> Option<Cube> {
 
     Some(Cube {
         on,
-        ranges: Ranges { x, y, z }
+        ranges: Ranges { x, y, z },
     })
 }
 
 fn cube_diffs(instructions: Vec<Cube>) -> Vec<Cube> {
-    let mut cubes: Vec<Cube> = Vec::new();
+    instructions.iter().fold(Vec::new(), |mut acc, curr| {
+        // add `on` instructions to the diff list.
+        let mut to_add = if curr.on { vec![curr.clone()] } else { vec![] };
+        // for every intersect with a previous diff, add a diff with opposite sign.
+        // this works because we only track `on` cubes and subtractions to them by default:
+        // 1. `off` instructions turn off intersecting parts of previous diffs.
+        // 2. previously `off` diffs can be turned back on by `on` instructions.
+        // 3. if both instructions were `on`, the new instruction cancel out old diffs to prevent duplicates.
+        to_add.extend(acc.iter().filter_map(|c| intersection(&curr, c, !c.on)));
+        acc.extend(to_add);
+        acc
+    })
+}
 
-    for inst in instructions {
-        let mut to_add: Vec<Cube> = Vec::new();
-
-        for cube in cubes.iter() {
-            let inter= intersection(&inst, cube, !cube.on);
-
-            if let Some(inter) = inter {
-                to_add.push(inter);
-            }
-        }
-
-        if inst.on {
-            to_add.push(inst);
-        }
-
-        cubes.extend(to_add);
-    }
-
-    cubes
+fn vol(r: Range) -> i64 {
+    r.to - r.from + 1
 }
 
 fn volume(c: Cube) -> i64 {
     let sign = if c.on { 1 } else { -1 };
-    sign * (c.ranges.x.to - c.ranges.x.from + 1) * (c.ranges.y.to - c.ranges.y.from + 1) * (c.ranges.z.to - c.ranges.z.from + 1)
+    sign * vol(c.ranges.x) * vol(c.ranges.y) * vol(c.ranges.z)
 }
 
 pub fn part_one(input: &str) -> i64 {
@@ -95,8 +96,8 @@ pub fn part_one(input: &str) -> i64 {
         ranges: Ranges {
             x: Range { from: -50, to: 50 },
             y: Range { from: -50, to: 50 },
-            z: Range { from: -50, to: 50 }
-        }
+            z: Range { from: -50, to: 50 },
+        },
     };
 
     cube_diffs(parse(input))
@@ -106,12 +107,8 @@ pub fn part_one(input: &str) -> i64 {
         .sum()
 }
 
-
 pub fn part_two(input: &str) -> i64 {
-    cube_diffs(parse(input))
-        .into_iter()
-        .map(volume)
-        .sum()
+    cube_diffs(parse(input)).into_iter().map(volume).sum()
 }
 
 #[cfg(test)]
