@@ -1,6 +1,8 @@
 /// Solved today by hand on a whiteboard with my family.
 /// This file contains a helper to sum moves and the correct solutions for my input.
-/// Here are some pictures of the whiteboard: [#1](https://git.io/JyIvl) [#2](https://git.io/JyIvg)
+/// Here are some pictures of the whiteboard:
+/// [#1](https://user-images.githubusercontent.com/1682504/147255802-bf21c955-7a1f-412f-9cb0-05627d359635.jpeg)
+/// [#2](https://user-images.githubusercontent.com/1682504/147255905-00f1ac8a-3d5b-4c01-b310-a1a2655a77f4.jpeg)
 
 fn sum(l: &str, factor: u64) -> u64 {
     l.split(' ')
